@@ -8,7 +8,7 @@ and `uv run pytest` passes.
 touches, and has a "Done when" that a test or a single command can prove.
 If a task feels big, split it before starting rather than half-finishing it. -->
 
-- [ ] **1. Project skeleton and `uv` setup**
+- [x] **1. Project skeleton and `uv` setup**
   Confirm `uv sync` works from a clean clone, `uv.lock` is committed, `ruff`
   passes on the stubs, and the commands in AGENTS.md are accurate.
   *Done when:* `uv sync && uv run pytest && uv run ruff check .` all succeed
