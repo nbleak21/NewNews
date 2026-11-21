@@ -14,7 +14,7 @@ If a task feels big, split it before starting rather than half-finishing it. -->
   *Done when:* `uv sync && uv run pytest && uv run ruff check .` all succeed
   from a fresh checkout.
 
-- [ ] **2. Config loader and schema validation** (`config.py`)
+- [x] **2. Config loader and schema validation** (`config.py`)
   Load YAML into frozen dataclasses with a default for every value. Reject
   unknown lean tags, duplicate source ids, `TODO_VERIFY` feed URLs, min / target
   / max out of order, `retain_hours` below `freshness_hours`, a non-positive

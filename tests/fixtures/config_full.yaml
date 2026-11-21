@@ -1,0 +1,89 @@
+# Test fixture: the same structure as config/sources.example.yaml, but with the
+# TODO_VERIFY placeholders replaced by reserved example.com URLs so the loader
+# accepts it. Nothing here is ever fetched; tests must not touch the network.
+
+# ---- Lineup size ----
+target_minutes: 25
+min_minutes: 20
+max_minutes: 30
+freshness_hours: 2
+max_per_source: 1
+
+# ---- Duration fallback ----
+assumed_bitrate_kbps: 128
+
+# ---- Output feed ----
+feed_title: "NewNews Commute"
+public_base_url: "https://machine.example.ts.net"
+retain_hour: 3
+
+# ---- Alerts (off) ----
+ntfy_topic: ""
+
+# ---- Polite fetching ----
+user_agent: "NewNews/0.1 (personal podcast aggregator)"
+timezone: "America/Chicago"
+
+# ---- Schedule ----
+schedule:
+  days: all
+  first_run: "04:15"
+  last_run: "18:15"
+  minute: 15
+
+# ---- Slots ----
+slots:
+  am:
+    label: "AM"
+    start: "04:15"
+    end: "11:59"
+    sources: all
+  pm:
+    label: "PM"
+    start: "12:00"
+    end: "18:15"
+    sources: all
+
+# ---- Sources (same ids, leans and priorities as the example) ----
+sources:
+  - id: fox_news_rundown
+    name: "Fox News Rundown"
+    lean: right
+    priority: 1
+    feed_url: "https://example.com/fixtures/fox-news-rundown.xml"
+
+  - id: npr_news_now
+    name: "NPR News Now"
+    lean: center-left
+    priority: 1
+    feed_url: "https://example.com/fixtures/npr-news-now.xml"
+
+  - id: wsj_whats_news
+    name: "WSJ What's News"
+    lean: center
+    priority: 2
+    feed_url: "https://example.com/fixtures/wsj-whats-news.xml"
+
+  - id: bbc_global_news
+    name: "BBC Global News Podcast"
+    lean: international
+    priority: 2
+    feed_url: "https://example.com/fixtures/bbc-global-news.xml"
+
+  - id: morning_wire
+    name: "Morning Wire"
+    lean: right
+    priority: 3
+    feed_url: "https://example.com/fixtures/morning-wire.xml"
+
+  - id: up_first
+    name: "Up First from NPR"
+    lean: center-left
+    priority: 3
+    feed_url: "https://example.com/fixtures/up-first.xml"
+
+  - id: the_daily
+    name: "The Daily"
+    lean: center-left
+    priority: 4
+    feed_url: "https://example.com/fixtures/the-daily.xml"
