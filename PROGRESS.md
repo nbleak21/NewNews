@@ -110,3 +110,30 @@ memory. Write what the NEXT session needs to know, not a diary. -->
   `slot_for_time` limits; the caller must filter `episodes` / `sources` by
   the current slot. An episode whose source is missing from the config is
   ranked last, never silently dropped. No network, no fixtures, no state.
+
+## 2026-11-21 — Task 6: SQLite state (`state.py`)
+
+- What changed: implemented `src/commute_news/state.py` on stdlib `sqlite3`
+  (no ORM). Two tables created idempotently by `connect()` (which also makes
+  missing parent dirs): `sources` (one row per source: `etag`,
+  `last_modified`) and `episodes` (one row per episode placed in the feed:
+  guid, source, title, published, enclosure url/type/length, duration,
+  `duration_estimated`, `slot_label`, `added_at`). Public helpers:
+  `connect`, `get_validators` (unknown source → `(None, None)`),
+  `save_validators` (upsert, commits), `used_guids`, `mark_used`
+  (upsert by guid — re-marking updates the row, newest run wins),
+  `recent_items(since)` (rows with `added_at >= since`, newest first, each
+  returned as a dict with `published` / `added_at` as aware `datetime`s) and
+  `prune(older_than)` (strictly-older rows deleted, returns the count).
+  Timestamps are stored as UTC epoch seconds (REAL) so SQL comparisons are
+  plain numbers. Added `tests/test_state.py` (7 tests, all on `tmp_path`).
+- Tests: `uv run pytest` → `69 passed`; `uv run ruff check .` and
+  `uv run ruff format --check .` both clean.
+- Notes / blockers: one `episodes` table is deliberately both the "used"
+  set and the retained-feed source: `retain_hours` (the only retention
+  knob) is what `prune` is called with, and because
+  `retain_hour >= freshness_hours` a pruned episode is already too old to be
+  re-selected. `prune` uses a strict `<`, so a row exactly on the cutoff
+  survives; `recent_items` uses `>=`, so a row exactly at `since` is
+  returned. `recent_items` does not apply `retain_hours` itself — the
+  caller passes `since = now - retain_hours`. No network, no fixtures.

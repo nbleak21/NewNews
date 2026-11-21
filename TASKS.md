@@ -46,7 +46,7 @@ If a task feels big, split it before starting rather than half-finishing it. -->
   undershoot (short lineup), nothing fresh, all used, tie on priority, and a
   case showing the lean mix is kept.
 
-- [ ] **6. SQLite state** (`state.py`)
+- [x] **6. SQLite state** (`state.py`)
   Schema creation, ETag / Last-Modified per source, used episodes, recent items
   for the retained feed, pruning rows older than `retain_hours` (the only
   retention setting).
