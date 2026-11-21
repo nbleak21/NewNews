@@ -1,0 +1,48 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permissions": [
+    { "action": "edit", "resource": "*", "effect": "allow" },
+    { "action": "shell", "resource": "*", "effect": "allow" },
+    { "action": "external_directory", "resource": "*", "effect": "ask" },
+    { "action": "shell", "resource": "uv add *", "effect": "ask" },
+    { "action": "shell", "resource": "uv pip install *", "effect": "ask" },
+    { "action": "shell", "resource": "uv tool install *", "effect": "ask" },
+    { "action": "shell", "resource": "pip install *", "effect": "ask" },
+    { "action": "shell", "resource": "pip3 install *", "effect": "ask" },
+    { "action": "shell", "resource": "python* -m pip install *", "effect": "ask" },
+    { "action": "shell", "resource": "brew install *", "effect": "ask" },
+    { "action": "shell", "resource": "npm install *", "effect": "ask" },
+    { "action": "shell", "resource": "npm i *", "effect": "ask" },
+    { "action": "shell", "resource": "npx *", "effect": "ask" },
+    { "action": "shell", "resource": "git push *", "effect": "deny" },
+    { "action": "shell", "resource": "git * push *", "effect": "deny" }
+  ],
+  "agents": {
+    "build": {
+      "permissions": [
+        { "action": "edit", "resource": "*", "effect": "allow" },
+        { "action": "shell", "resource": "*", "effect": "allow" },
+        { "action": "external_directory", "resource": "*", "effect": "ask" },
+        { "action": "shell", "resource": "uv add *", "effect": "ask" },
+        { "action": "shell", "resource": "uv pip install *", "effect": "ask" },
+        { "action": "shell", "resource": "uv tool install *", "effect": "ask" },
+        { "action": "shell", "resource": "pip install *", "effect": "ask" },
+        { "action": "shell", "resource": "pip3 install *", "effect": "ask" },
+        { "action": "shell", "resource": "python* -m pip install *", "effect": "ask" },
+        { "action": "shell", "resource": "brew install *", "effect": "ask" },
+        { "action": "shell", "resource": "npm install *", "effect": "ask" },
+        { "action": "shell", "resource": "npm i *", "effect": "ask" },
+        { "action": "shell", "resource": "npx *", "effect": "ask" },
+        { "action": "shell", "resource": "git push *", "effect": "deny" },
+        { "action": "shell", "resource": "git * push *", "effect": "deny" }
+      ]
+    },
+    "plan": {
+      "permissions": [
+        { "action": "edit", "resource": "*", "effect": "deny" },
+        { "action": "shell", "resource": "git push *", "effect": "deny" },
+        { "action": "shell", "resource": "git * push *", "effect": "deny" }
+      ]
+    }
+  }
+}

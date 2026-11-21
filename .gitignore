@@ -1,0 +1,21 @@
+# Runtime artefacts (never commit)
+state/
+logs/
+build/
+.env
+.venv/
+
+# Python noise
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# macOS
+.DS_Store
+
+# Real config is local; only the example is tracked.
+# HINT: delete the next line if you would rather version your real source list
+# (it holds no secrets as long as the token and ntfy topic stay in .env).
+config/sources.yaml

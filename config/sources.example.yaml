@@ -1,0 +1,121 @@
+# NewNews configuration (example).
+# Copy to config/sources.yaml and edit. Every key has a default in config.py,
+# so anything you delete here falls back to that default.
+#
+# HINT: feed URLs below are placeholders on purpose. Never guess them. Verify
+# each one (TASKS.md task 9) with the Apple lookup API, which returns `feedUrl`:
+#   https://itunes.apple.com/lookup?id=<apple_podcast_id>&entity=podcast
+
+# ---- Lineup size ----
+target_minutes: 25      # aim for this total runtime
+min_minutes: 20         # below this the lineup is "short" (still published, logged as a warning)
+max_minutes: 30         # never exceed this
+freshness_hours: 2      # only episodes published within this window are eligible
+max_per_source: 1       # newest unplayed episode per show
+
+# ---- Duration fallback ----
+# Used only when an episode has no <itunes:duration>. Seconds are then ESTIMATED
+# from the enclosure `length` (bytes):
+#   seconds ~= bytes * 8 / (assumed_bitrate_kbps * 1000)
+# This is an approximation (real bitrates vary, and some feeds report a wrong
+# length). If `length` is also missing or zero, the episode is skipped.
+assumed_bitrate_kbps: 128
+
+# ---- Output feed ----
+feed_title: "NewNews Commute"
+# Public origin WITHOUT the secret token. The token comes from NEWNEWS_FEED_TOKEN
+# in .env, giving: <public_base_url>/<token>/feed.xml
+public_base_url: "https://TODO_YOUR_MACHINE.TODO_TAILNET.ts.net"
+retain_hours: 3         # the ONE retention control: feed items AND SQLite state rows
+                        # older than this are dropped
+# HINT: retain_hours must be >= freshness_hours. State rows are what stop an
+# episode being picked twice; once a row is pruned the episode is already too
+# old to pass the freshness filter, so it cannot come back.
+
+# ---- Alerts (optional) ----
+ntfy_topic: ""          # empty = alerts off. NTFY_TOPIC in .env overrides this.
+
+# ---- Polite fetching ----
+user_agent: "NewNews/0.1 (personal podcast aggregator; contact: TODO_YOUR_EMAIL)"
+timezone: "America/Chicago"
+
+# ---- Schedule ----
+# Decided: one run per hour, every day of the week, from 04:15 to 18:15 local
+# time (15 runs a day). launchd does the actual scheduling; the install script
+# (TASKS.md task 10) renders one StartCalendarInterval entry per hour from this.
+# HINT: launchd uses the Mac's system time zone, so the Mac must be set to
+# Central time for these to be America/Chicago times.
+schedule:
+  days: all             # all seven days
+  first_run: "04:15"
+  last_run: "18:15"
+  minute: 15            # runs at HH:15 for every hour from first_run to last_run
+
+# ---- Slots ----
+# A slot labels the lineup (title prefix "AM Fri 11/21 · 2/5 · ...") and limits
+# which sources may be used. `sources: all` allows every source below.
+# HINT: slots do not schedule anything (see `schedule` above); these times only
+# decide which slot an hourly run belongs to. Together they cover 04:15-18:15.
+slots:
+  am:
+    label: "AM"
+    start: "04:15"
+    end: "11:59"
+    sources: all
+  pm:
+    label: "PM"
+    start: "12:00"
+    end: "18:15"
+    sources: all
+    # Example of restricting a slot:
+    # sources: [npr_news_now, fox_news_rundown, wsj_whats_news, bbc_global_news]
+
+# ---- Sources ----
+# priority: 1 is picked first. lean: tag used to keep a mix of outlets.
+# Allowed lean values: left, center-left, center, right, international.
+sources:
+  - id: fox_news_rundown
+    name: "Fox News Rundown"
+    lean: right
+    priority: 1
+    feed_url: "TODO_VERIFY"
+
+  - id: npr_news_now
+    name: "NPR News Now"
+    lean: center-left
+    priority: 1
+    feed_url: "TODO_VERIFY"   # hourly, ~5 min
+
+  - id: wsj_whats_news
+    name: "WSJ What's News"
+    lean: center
+    priority: 2
+    feed_url: "TODO_VERIFY"
+
+  - id: bbc_global_news
+    name: "BBC Global News Podcast"
+    lean: international
+    priority: 2
+    feed_url: "TODO_VERIFY"
+
+  - id: morning_wire
+    name: "Morning Wire"
+    lean: right
+    priority: 3
+    feed_url: "TODO_VERIFY"
+
+  - id: up_first
+    name: "Up First from NPR"
+    lean: center-left
+    priority: 3
+    feed_url: "TODO_VERIFY"
+
+  - id: the_daily
+    name: "The Daily"
+    lean: center-left
+    priority: 4
+    feed_url: "TODO_VERIFY"
+
+# HINT: to add a source, copy a block, give it a unique `id`, and leave
+# feed_url as TODO_VERIFY until you have confirmed it. The loader must reject
+# TODO_VERIFY at run time so a placeholder can never be fetched.
