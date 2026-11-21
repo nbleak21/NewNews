@@ -29,7 +29,7 @@ If a task feels big, split it before starting rather than half-finishing it. -->
   *Done when:* tests using `httpx.MockTransport` prove 200, 304, 404, timeout,
   header contents, and that each URL is requested exactly once.
 
-- [ ] **4. Episode parser and duration handling** (`parse.py`)
+- [x] **4. Episode parser and duration handling** (`parse.py`)
   feedparser to `Episode`. Parse `itunes:duration` as seconds, `MM:SS` and
   `HH:MM:SS`. If it is missing, estimate from the enclosure `length` in bytes:
   `seconds ~= bytes * 8 / (assumed_bitrate_kbps * 1000)` (config, default 128),

@@ -66,3 +66,24 @@ memory. Write what the NEXT session needs to know, not a diary. -->
   server does not echo them; a 200 replaces them with the response headers.
   Sources sharing a feed URL are fetched once. Task 6 (state) will supply
   the validators mapping that `fetch_all` already accepts.
+
+## 2026-11-21 — Task 4: Episode parser and duration handling (`parse.py`)
+
+- What changed: implemented `src/commute_news/parse.py` — frozen `Episode`
+  (source_id / guid / title / published / enclosure url, type, length, plus
+  `duration` in seconds and a `duration_estimated` flag), `parse_duration`
+  (plain seconds, `MM:SS`, `HH:MM:SS`, else `None`),
+  `estimate_duration_from_length` (the documented
+  `bytes * 8 / (kbps * 1000)` approximation; `None` for missing or zero
+  length) and `parse_feed` (feedparser in, episodes sorted newest first;
+  skips entries with no enclosure, a missing/malformed date, or no duration
+  and no usable length). Added `tests/test_parse.py` (12 tests) and three
+  fixtures: `durations.xml`, `estimate_duration.xml`, `skip_items.xml`.
+- Tests: `uv run pytest` → `41 passed`; `uv run ruff check .` and
+  `uv run ruff format --check .` both clean.
+- Notes / blockers: an episode with a missing or malformed `pubDate` is
+  skipped, because it cannot be aged against the 2-hour freshness window.
+  The `duration_estimated` flag is what the dry run (task 8) should
+  surface. `parse_feed` takes `assumed_bitrate_kbps` per call, so
+  `config.assumed_bitrate_kbps` plugs in at task 8. No network was used;
+  fixtures only.

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+  <channel>
+    <title>Skip-case fixtures</title>
+    <link>https://feeds.example.test/skips</link>
+    <description>Items the parser must skip. Never fetched from the network.</description>
+    <item>
+      <title>Missing enclosure</title>
+      <guid isPermaLink="false">skip-no-enclosure</guid>
+      <pubDate>Thu, 19 Nov 2026 06:00:00 GMT</pubDate>
+      <itunes:duration>300</itunes:duration>
+    </item>
+    <item>
+      <title>Malformed date</title>
+      <guid isPermaLink="false">skip-bad-date</guid>
+      <pubDate>not a date at all</pubDate>
+      <enclosure url="https://media.example.test/audio/bad-date.mp3" length="1000" type="audio/mpeg"/>
+      <itunes:duration>300</itunes:duration>
+    </item>
+    <item>
+      <title>No date</title>
+      <guid isPermaLink="false">skip-no-date</guid>
+      <enclosure url="https://media.example.test/audio/no-date.mp3" length="1000" type="audio/mpeg"/>
+      <itunes:duration>300</itunes:duration>
+    </item>
+    <item>
+      <title>Kept: enclosure and a real date</title>
+      <guid isPermaLink="false">keep-001</guid>
+      <pubDate>Thu, 19 Nov 2026 09:00:00 GMT</pubDate>
+      <enclosure url="https://media.example.test/audio/keep.mp3" length="1000" type="audio/mpeg"/>
+      <itunes:duration>300</itunes:duration>
+    </item>
+  </channel>
+</rss>

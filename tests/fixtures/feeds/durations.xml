@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+  <channel>
+    <title>Duration fixtures</title>
+    <link>https://feeds.example.test/durations</link>
+    <description>Hand-written itunes:duration cases. Never fetched from the network.</description>
+    <item>
+      <title>Hours minutes seconds</title>
+      <guid isPermaLink="false">dur-hhmmss</guid>
+      <pubDate>Thu, 19 Nov 2026 08:00:00 GMT</pubDate>
+      <enclosure url="https://media.example.test/audio/hhmmss.mp3" length="1000" type="audio/mpeg"/>
+      <itunes:duration>1:02:03</itunes:duration>
+    </item>
+    <item>
+      <title>Plain seconds, huge length must not win</title>
+      <guid isPermaLink="false">dur-seconds</guid>
+      <pubDate>Thu, 19 Nov 2026 06:00:00 GMT</pubDate>
+      <enclosure url="https://media.example.test/audio/seconds.mp3" length="999999999" type="audio/mpeg"/>
+      <itunes:duration>1234</itunes:duration>
+    </item>
+    <item>
+      <title>Minutes and seconds</title>
+      <guid isPermaLink="false">dur-mmss</guid>
+      <pubDate>Thu, 19 Nov 2026 07:00:00 GMT</pubDate>
+      <enclosure url="https://media.example.test/audio/mmss.mp3" length="1000" type="audio/mpeg"/>
+      <itunes:duration>05:00</itunes:duration>
+    </item>
+  </channel>
+</rss>
