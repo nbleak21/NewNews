@@ -34,7 +34,20 @@ fi
 
 MAX_ITERATIONS="${1:-${MAX_ITERATIONS:-15}}"
 ITER_TIMEOUT_MIN="${ITER_TIMEOUT_MIN:-60}"
-PROMPT="Read AGENTS.md, then complete the next unchecked task in TASKS.md."
+# HINT: a small / local model needs the whole workflow spelled out. A terse
+# "complete the next task" prompt makes weaker models no-op. Keep these steps
+# explicit and numbered. (Validated: MiMo 4-bit needs this; strong models are
+# fine either way.)
+PROMPT="You are completing exactly ONE task in this git repository. Do the steps in order; do not skip any.
+1. Use your read tool to read AGENTS.md in full. It is the authority on rules, commands, style and workflow.
+2. Use your read tool to read TASKS.md. Find the FIRST line beginning with '- [ ]' (the first unchecked task). That single task is your entire job; ignore every other task.
+3. Re-read that task's description and its 'Done when' line so you know exactly what done means.
+4. Write or update the tests for this task FIRST, under tests/. Use fixtures in tests/fixtures/; never touch the network in tests.
+5. Implement the minimal code to make those tests pass. Keep all changes scoped to this one task. Follow AGENTS.md style: type hints, small pure functions, logging not print, every config value has a default.
+6. Run the full suite: uv run pytest
+7. ONLY if every test passes: change that task's '- [ ]' to '- [x]' in TASKS.md, and append a dated entry to PROGRESS.md using the template at the top of that file.
+8. If you are blocked or cannot finish, do NOT guess: append the blocker to PROGRESS.md and stop.
+Do not modify any other unchecked task. Never run git push."
 
 mkdir -p logs
 LOG="logs/agent-loop-$(date +%Y-%m-%d).log"
