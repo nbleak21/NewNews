@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+  <channel>
+    <title>Sample Feed</title>
+    <link>https://feeds.example.test/sample</link>
+    <description>Offline sample used by tests. Never fetched from the network.</description>
+    <item>
+      <title>Sample episode</title>
+      <guid isPermaLink="false">sample-001</guid>
+      <pubDate>Thu, 19 Nov 2026 06:00:00 GMT</pubDate>
+      <enclosure url="https://media.example.test/audio/001.mp3" length="2400000" type="audio/mpeg"/>
+      <itunes:duration>05:00</itunes:duration>
+    </item>
+  </channel>
+</rss>

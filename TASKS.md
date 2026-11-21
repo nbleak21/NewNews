@@ -22,7 +22,7 @@ If a task feels big, split it before starting rather than half-finishing it. -->
   *Done when:* tests load `config/sources.example.yaml` structure from a
   fixture, cover each rejection case, and cover an empty file giving defaults.
 
-- [ ] **3. Feed fetcher with conditional GET** (`fetch.py`)
+- [x] **3. Feed fetcher with conditional GET** (`fetch.py`)
   httpx client with descriptive User-Agent, `If-None-Match` /
   `If-Modified-Since`, timeouts, one request per feed per run. Errors are
   returned, not raised.

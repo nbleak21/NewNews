@@ -48,3 +48,21 @@ memory. Write what the NEXT session needs to know, not a diary. -->
   both ends, `None` outside every slot) and covered by a test; the other
   modules in `src/commute_news/` are still stubs. The fixture uses
   `example.com` URLs on purpose: no real feed URL was guessed.
+
+## 2026-11-21 — Task 3: Feed fetcher with conditional GET (`fetch.py`)
+
+- What changed: implemented `src/commute_news/fetch.py` — frozen
+  `FetchResult` (url / status / body / etag / last_modified / error, plus
+  `ok` and `not_modified` helpers), `build_client` (injectable transport,
+  15 s default timeout, follows redirects), `build_headers` (User-Agent plus
+  `If-None-Match` / `If-Modified-Since`), `fetch_feed` (one conditional GET,
+  HTTP and network failures returned as an `error`, never raised) and
+  `fetch_all` (one request per distinct feed URL per run, results keyed by
+  source id). Added `tests/test_fetch.py` (12 tests) and the offline
+  fixture `tests/fixtures/feeds/sample_feed.xml`.
+- Tests: `uv run pytest` → `29 passed`; `uv run ruff check .` and
+  `uv run ruff format --check .` both clean.
+- Notes / blockers: a 304 keeps the stored ETag / Last-Modified when the
+  server does not echo them; a 200 replaces them with the response headers.
+  Sources sharing a feed URL are fetched once. Task 6 (state) will supply
+  the validators mapping that `fetch_all` already accepts.
