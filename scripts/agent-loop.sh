@@ -39,6 +39,7 @@ ITER_TIMEOUT_MIN="${ITER_TIMEOUT_MIN:-60}"
 # explicit and numbered. (Validated: MiMo 4-bit needs this; strong models are
 # fine either way.)
 PROMPT="You are completing exactly ONE task in this git repository. Do the steps in order; do not skip any.
+IMPORTANT - tool-call discipline: make exactly ONE tool call per turn, then WAIT for its result before deciding the next call. Never emit several tool calls in one turn - a large batch overflows the model output limit and the entire turn is discarded, making no progress. Read only the specific files this task needs; do not scan, list, or inventory the whole repository.
 1. Use your read tool to read AGENTS.md in full. It is the authority on rules, commands, style and workflow.
 2. Use your read tool to read TASKS.md. Find the FIRST line beginning with '- [ ]' (the first unchecked task). That single task is your entire job; ignore every other task.
 3. Re-read that task's description and its 'Done when' line so you know exactly what done means.
