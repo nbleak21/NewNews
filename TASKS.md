@@ -54,7 +54,7 @@ If a task feels big, split it before starting rather than half-finishing it. -->
   function, that pruning removes only rows older than `retain_hours`, and that
   re-opening the file keeps the data.
 
-- [ ] **7. Feed writer with title and pubDate ordering** (`feedwriter.py`)
+- [x] **7. Feed writer with title and pubDate ordering** (`feedwriter.py`)
   Title prefix, pubDates a few seconds apart, original enclosure URL / type /
   length passed through untouched, `retain_hours` (default 3) of items
   retained, atomic write.

@@ -137,3 +137,35 @@ memory. Write what the NEXT session needs to know, not a diary. -->
   survives; `recent_items` uses `>=`, so a row exactly at `since` is
   returned. `recent_items` does not apply `retain_hours` itself — the
   caller passes `since = now - retain_hours`. No network, no fixtures.
+
+## 2026-11-21 — Task 7: Feed writer with title and pubDate ordering (`feedwriter.py`)
+
+- What changed: implemented `src/commute_news/feedwriter.py` — frozen
+  `FeedItem` (title, guid, pub_date, enclosure url/type/length, the last two
+  copied through untouched), `format_title` (the documented
+  `AM Fri 11/21 · 2/5 · <source> — <title>` prefix, weekday from a hardcoded
+  tuple so no locale is involved), `ordered_pubdates` (index 0 = `base`, each
+  next stamp `step_seconds` earlier, default 5 s, so the lineup order and a
+  newest-first player order agree), `render_feed` (RSS 2.0 bytes; drops items
+  older than `now - retain_hours`, default `DEFAULT_RETAIN_HOURS = 3`, cutoff
+  inclusive to match `state.prune`) and `write_feed` (tmp file in the target
+  directory + `os.replace`, so the swap is atomic and no `.tmp` survives).
+  Added `tests/test_feedwriter.py` (18 tests, all offline: the XML is parsed
+  back with `feedparser` and with `ElementTree`, files only under
+  `tmp_path`); no fixtures were needed because the items are built in memory.
+- Tests: `uv run pytest` → `85 passed`; `uv run ruff check .` and
+  `uv run ruff format --check .` both clean.
+- Notes / blockers: **XML tool chosen: `feedgen` (already a dependency), not a
+  hand-rolled writer.** It supplies the escaping, the RFC-2822 dates, the
+  `<enclosure>` element and the `atom:link rel="self"` that a podcast client
+  expects, all of which this task would otherwise have had to get right by
+  hand. Three of its calls are load-bearing and easy to get wrong:
+  `add_entry(order="append")` because the default is `prepend` (which would
+  reverse the lineup), `entry.pubDate(...)` because the lowercase
+  `entry.pubdate` is deprecated and warns, and `length=` must be passed as a
+  `str` or lxml refuses the attribute. `render_feed` returns `bytes` (what
+  lands on disk and what a player downloads), takes the channel title and the
+  feed's own tokenised URL as arguments, and treats `now` as an argument
+  rather than the wall clock so retention is testable. `retain_hours` is
+  still the single retention knob; the 3-hour default here is only the
+  fallback when no config is supplied. No network, no new dependencies.
