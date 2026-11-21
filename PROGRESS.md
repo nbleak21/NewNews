@@ -87,3 +87,26 @@ memory. Write what the NEXT session needs to know, not a diary. -->
   surface. `parse_feed` takes `assumed_bitrate_kbps` per call, so
   `config.assumed_bitrate_kbps` plugs in at task 8. No network was used;
   fixtures only.
+
+## 2026-11-21 — Task 5: Selection algorithm (`select.py`)
+
+- What changed: implemented `src/commute_news/select.py` — frozen `Lineup`
+  (chosen `episodes` plus `total_seconds`, with a `total_minutes` helper),
+  `eligible_episodes` (unplayed + inside the freshness window + at most
+  `max_per_source` newest per source), `order_candidates` (rank: priority
+  ascending, then newer `published`, then `source_id` for a stable order;
+  candidates are grouped by the source's lean tag and the groups are
+  round-robined so the top of the lineup mixes leans),
+  `fill_to_target` (a prefix of the ordered candidates: stops at
+  `target_minutes`, never above `max_minutes`, returns a short lineup
+  as-is) and `select_lineup` (the three steps wired together). Added
+  `tests/test_select.py` (19 tests, all episodes built in memory).
+- Tests: `uv run pytest` → `60 passed`; `uv run ruff check .` and
+  `uv run ruff format --check .` both clean.
+- Notes / blockers: priority 1 is picked first, per the comment in
+  `config/sources.example.yaml`. `fill_to_target` raises `ValueError` unless
+  `0 <= min <= target <= max`; a short lineup is NOT an error here — tasks
+  8/12 decide what to do about one. `select_lineup` does not apply
+  `slot_for_time` limits; the caller must filter `episodes` / `sources` by
+  the current slot. An episode whose source is missing from the config is
+  ranked last, never silently dropped. No network, no fixtures, no state.

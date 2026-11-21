@@ -39,7 +39,7 @@ If a task feels big, split it before starting rather than half-finishing it. -->
   (checked against the formula), a missing duration with missing and with zero
   `length` (skipped), a missing enclosure and a malformed date.
 
-- [ ] **5. Selection algorithm** (`select.py`)
+- [x] **5. Selection algorithm** (`select.py`)
   Pure functions: freshness filter, unplayed filter, newest per source,
   priority order with lean mix, fill to target within min..max.
   *Done when:* table-driven tests cover: exact fit, overshoot avoided,
