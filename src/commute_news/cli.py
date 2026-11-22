@@ -25,7 +25,17 @@ from .feedwriter import FeedItem, format_title, ordered_pubdates, render_feed, w
 from .fetch import build_client, fetch_all
 from .parse import Episode, parse_feed
 from .select import Lineup, select_lineup
-from .state import connect, mark_used, prune, save_validators
+from .state import (
+    connect,
+    get_validators,
+    mark_used,
+    prune,
+    recent_items,
+    save_validators,
+)
+from .state import (
+    used_guids as read_used_guids,
+)
 
 #: Where ``--config`` points when the flag is not given.
 DEFAULT_CONFIG = "config/sources.yaml"
@@ -82,19 +92,22 @@ def run_build(
     *,
     client: httpx.Client | None = None,
     now: datetime | None = None,
-    used_guids: Collection[str] = frozenset(),
+    used_guids: Collection[str] | None = None,
     state_conn: sqlite3.Connection | None = None,
 ) -> Lineup:
     """Fetch, parse and select the lineup for one run.
 
     When ``dry_run`` is True: print the lineup and total minutes to stdout
-    and return the Lineup (no files are written, no state is updated).
+    and return the Lineup (no files are written, no state is created).
 
-    When ``dry_run`` is False: write ``feed.xml`` to ``build/<token>/`` and
-    record state to ``state/commute.db``.
+    When ``dry_run`` is False: record this run, prune, and write the whole
+    retained (~``retain_hours``) feed to ``build/<token>/feed.xml``.
 
-    ``client``, ``now``, ``used_guids`` and ``state_conn`` are injectable so
-    tests run offline against a fixed clock.
+    State is READ as well as written: already-used episode guids are loaded so
+    an episode is never repeated across runs, and each source's stored ETag /
+    Last-Modified drive a conditional GET. ``client``, ``now``, ``used_guids``
+    and ``state_conn`` are injectable so tests run offline against a fixed
+    clock; an explicit ``used_guids`` (even empty) disables the auto-load.
     """
     config = load_config(config_path)
     if client is None:
@@ -102,9 +115,31 @@ def run_build(
     if now is None:
         now = datetime.now(UTC)
 
+    # A state connection for reading (and, on a real build, writing). A dry run
+    # must never CREATE the database, so it only opens one that already exists.
+    conn = state_conn
+    own_conn = False
+    if conn is None:
+        state_path = Path(DEFAULT_STATE_PATH)
+        if not dry_run or state_path.exists():
+            conn = connect(state_path)
+            own_conn = True
+
+    # Already-used episodes: an explicit argument wins (tests); otherwise load
+    # them from state so a later run never repeats an episode.
+    if used_guids is None:
+        used_guids = read_used_guids(conn) if conn is not None else set()
+
     allowed = _slot_sources(config, now)
     allowed_ids = {source.id for source in allowed}
-    results = fetch_all(client, config.sources, user_agent=config.user_agent)
+
+    # Conditional GET: send each source's stored ETag / Last-Modified.
+    validators = (
+        {source.id: get_validators(conn, source.id) for source in config.sources}
+        if conn is not None
+        else None
+    )
+    results = fetch_all(client, config.sources, validators=validators, user_agent=config.user_agent)
 
     episodes: list[Episode] = []
     for source in config.sources:
@@ -142,8 +177,11 @@ def run_build(
         # Print the lineup to stdout (the one deliberate use of print)
         _print_lineup(lineup, config)
     else:
-        # Write the feed and record state
-        _write_feed_and_state(lineup, config, now, state_conn, results)
+        # Record state and write the retained (~retain_hours) feed.
+        _write_feed_and_state(lineup, config, now, state_conn=conn, fetch_results=results)
+
+    if own_conn and conn is not None:
+        conn.close()
 
     return lineup
 
@@ -210,54 +248,92 @@ def _write_feed_and_state(
     state_conn: sqlite3.Connection | None = None,
     fetch_results: dict[str, Any] | None = None,
 ) -> None:
-    """Write the feed.xml and record state.
+    """Record this run's state, then write the whole retained feed.
 
-    Creates ``build/<token>/feed.xml`` and updates ``state/commute.db``.
-
-    ``fetch_results`` is optional; if provided, ETags and Last-Modified
-    headers are saved for each source.
+    The feed is the entire retained window (``retain_hours``), not just this
+    run's lineup: this run's episodes are recorded, old rows pruned, and the
+    feed rebuilt from ``recent_items`` so items persist across runs and drop
+    off once they age past ``retain_hours``. Validators are saved for the next
+    run's conditional GET.
     """
-    # Get the feed token
-    _get_feed_token()
-
-    # Build the FeedItems from the lineup
-    feed_items = []
-    for i, episode in enumerate(lineup.episodes):
-        # Get the source name for this episode
-        source = next((s for s in config.sources if s.id == episode.source_id), None)
-        source_name = source.name if source else episode.source_id
-
-        # Format the title
-        formatted = format_title(
-            slot_label=config.slots[0].label if config.slots else "",
-            when=episode.published,
-            position=i + 1,
-            total=len(lineup.episodes),
-            source_name=source_name,
-            original_title=episode.title,
-        )
-
-        # Calculate pubDate (newest first, a few seconds apart)
-        pub_dates = ordered_pubdates(
-            base=now,
-            count=len(lineup.episodes),
-            step_seconds=5,  # 5 seconds apart
-        )
-        pub_date = pub_dates[i]
-
-        feed_items.append(
-            FeedItem(
-                title=formatted,
-                guid=episode.guid,
-                pub_date=pub_date,
-                enclosure_url=episode.enclosure_url,
-                enclosure_type=episode.enclosure_type or "audio/mpeg",
-                enclosure_length=int(episode.enclosure_length or 0),
-            )
-        )
-
-    # Render the feed
     feed_token = _get_feed_token()
+
+    own = False
+    if state_conn is None:
+        state_conn = connect(Path(DEFAULT_STATE_PATH))
+        own = True
+
+    slot_label = config.slots[0].label if config.slots else ""
+
+    # 1. Record this run, save validators, prune — so the window read back below
+    #    is current.
+    mark_used(state_conn, lineup.episodes, slot_label, now)
+    if fetch_results:
+        for source in config.sources:
+            result = fetch_results.get(source.id)
+            if result is not None:
+                save_validators(
+                    state_conn,
+                    source.id,
+                    etag=result.etag,
+                    last_modified=result.last_modified,
+                )
+    cutoff = now - timedelta(hours=config.retain_hour)
+    removed = prune(state_conn, cutoff)
+    if removed:
+        logger.info("pruned %d old episode(s)", removed)
+
+    # 2. Build the feed, guid-unique, from the whole retained window: this run's
+    #    lineup first (keeping its curated order), then older retained items
+    #    (recent_items is newest-first).
+    retained = recent_items(state_conn, cutoff)
+    source_names = {source.id: source.name for source in config.sources}
+    seen: set[str] = set()
+    items: list[dict[str, Any]] = []
+    for episode in lineup.episodes:
+        if episode.guid in seen:
+            continue
+        seen.add(episode.guid)
+        items.append(
+            {
+                "guid": episode.guid,
+                "source_id": episode.source_id,
+                "title": episode.title,
+                "published": episode.published,
+                "enclosure_url": episode.enclosure_url,
+                "enclosure_type": episode.enclosure_type,
+                "enclosure_length": episode.enclosure_length,
+                "slot_label": slot_label,
+            }
+        )
+    for row in retained:
+        if row["guid"] in seen:
+            continue
+        seen.add(row["guid"])
+        items.append(row)
+
+    pub_dates = ordered_pubdates(base=now, count=len(items), step_seconds=5)
+    feed_items = [
+        FeedItem(
+            title=format_title(
+                slot_label=item["slot_label"],
+                when=item["published"],
+                position=i + 1,
+                total=len(items),
+                source_name=source_names.get(item["source_id"], item["source_id"]),
+                original_title=item["title"],
+            ),
+            guid=item["guid"],
+            pub_date=pub_dates[i],
+            enclosure_url=item["enclosure_url"],
+            enclosure_type=item["enclosure_type"] or "audio/mpeg",
+            enclosure_length=int(item["enclosure_length"] or 0),
+        )
+        for i, item in enumerate(items)
+    ]
+
+    # 3. Render and write. retain_hours is already enforced above by
+    #    prune/recent_items; render_feed drops nothing (every pub_date is ~now).
     feed_url = f"{config.public_base_url}/{feed_token}/feed.xml"
     feed_xml = render_feed(
         feed_items,
@@ -266,38 +342,12 @@ def _write_feed_and_state(
         now=now,
         retain_hours=config.retain_hour,
     )
-
-    # Write to build/<token>/feed.xml
-    build_dir = Path("build") / feed_token
-    feed_path = build_dir / "feed.xml"
+    feed_path = Path("build") / feed_token / "feed.xml"
     write_feed(feed_xml, feed_path)
     logger.info("wrote feed to %s", feed_path)
 
-    # Record state
-    if state_conn is None:
-        state_conn = connect(Path(DEFAULT_STATE_PATH))
-
-    # Mark used episodes
-    slot_label = config.slots[0].label if config.slots else ""
-    mark_used(state_conn, lineup.episodes, slot_label, now)
-
-    # Save validators from the fetch results
-    if fetch_results:
-        for source in config.sources:
-            result = fetch_results.get(source.id)
-            if result:
-                save_validators(
-                    state_conn,
-                    source.id,
-                    etag=result.etag,
-                    last_modified=result.last_modified,
-                )
-
-    # Prune old rows
-    cutoff = now - timedelta(hours=config.retain_hour)
-    removed = prune(state_conn, cutoff)
-    if removed:
-        logger.info("pruned %d old episode(s)", removed)
+    if own:
+        state_conn.close()
 
 
 def _get_ntfy_topic(config: Config | None = None) -> str | None:

@@ -331,3 +331,27 @@ memory. Write what the NEXT session needs to know, not a diary. -->
   (`tests/fixtures/feeds/ap-news-now.xml`) and documenting the process, though no new
   verified source was added to the active config (all sources are already verified). The
   dry-run confirms the system works correctly with valid feed URLs.
+
+## 2026-11-22 — Fix: wire state reads into the pipeline (dedup, 3h feed, conditional GET)
+
+- What changed: `run_build` and `_write_feed_and_state` in
+  `src/commute_news/cli.py` now READ state, not only write it. `run_build` opens
+  the state DB (never creating it in a dry run), loads `used_guids` so an episode
+  is never repeated across runs, and passes each source's stored
+  ETag/Last-Modified to `fetch_all` for a real conditional GET. The feed is
+  rebuilt from `recent_items` — the whole retained window, guid-unique, this
+  run's lineup first — instead of only the current lineup, so items persist for
+  ~`retain_hours` and drop off after. `run_build`'s `used_guids` default changed
+  from `frozenset()` to `None` (= auto-load; an explicit value still wins, so
+  every existing caller/test is unaffected).
+- Tests: rewrote `tests/test_e2e.py` (3 tests) to assert run 2's episodes are
+  DISJOINT from run 1's and that the written feed still carries run 1's items.
+  The old e2e only checked `len(lineup2) <= len(lineup1)`, which passed even when
+  every episode repeated. `uv run pytest` → `141 passed`; `ruff check`/`format`
+  clean.
+- Notes / blockers: found in a post-build review. The state machinery from task
+  6 (`used_guids`/`recent_items`/`get_validators`) was written but never read
+  back, so the live `commute-news build` would have repeated episodes, shown only
+  the latest ~25 min, and never sent conditional GETs — contrary to AGENTS.md
+  rules 3 and 5. All three are now wired. Separately, all 7 Apple feed URLs in
+  `config/sources.yaml` were re-verified live against the lookup API: all match.
