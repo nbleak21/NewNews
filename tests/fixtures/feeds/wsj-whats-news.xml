@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:media="http://search.yahoo.com/mrss/" xmlns:podcast="https://podcastindex.org/namespace/1.0">
+  <channel>
+    <atom:link href="https://feeds.simplecast.com/BA5QWI2p" rel="self" title="MP3 Audio" type="application/atom+xml"/>
+    <atom:link href="https://simplecast.superfeedr.com" rel="hub" xmlns="http://www.w3.org/2005/Atom"/>
+    <generator>https://simplecast.com</generator>
+    <title>WSJ What’s News</title>
+    <description>What&apos;s News brings you the biggest news of the day, from business and finance to global and political developments that move markets. Get caught up in minutes twice a day on weekdays, then take a step back with our What’s News in Markets wrap-up on Saturday and our What’s News Sunday deep dive.</description>
+    <copyright>Copyright © Dow Jones &amp; Company, Inc. All Rights Reserved.</copyright>
+    <language>en-us</language>
+    <pubDate>Sat, 21 Nov 2026 11:00:00 +0000</pubDate>
+    <lastBuildDate>Sat, 21 Nov 2026 11:00:44 +0000</lastBuildDate>
+    <image>
+      <link>https://www.wsj.com/podcasts/whats-news</link>
+      <title>WSJ What’s News</title>
+      <url>https://image.simplecastcdn.com/images/2c92a2cd-3a2f-45b3-921e-47761cbb22bf/6217867a-d73c-4d6e-8480-4513279cce9c/3000x3000/wsjpodcastwhatsnews.jpg?aid=rss_feed</url>
+    </image>
+    <link>https://www.wsj.com/podcasts/whats-news</link>
+    <itunes:type>episodic</itunes:type>
+    <itunes:summary>What&apos;s News brings you the biggest news of the day, from business and finance to global and political developments that move markets. Get caught up in minutes twice a day on weekdays, then take a step back with our What’s News in Markets wrap-up on Saturday and our What’s News Sunday deep dive.</itunes:summary>
+    <itunes:author>The Wall Street Journal</itunes:author>
+    <itunes:explicit>false</itunes:explicit>
+    <itunes:image href="https://image.simplecastcdn.com/images/2c92a2cd-3a2f-45b3-921e-47761cbb22bf/6217867a-d73c-4d6e-8480-4513279cce9c/3000x3000/wsjpodcastwhatsnews.jpg?aid=rss_feed"/>
+    
+    <itunes:owner>
+      <itunes:name>The Wall Street Journal</itunes:name>
+      <itunes:email>podcasts@dowjones.com</itunes:email>
+    </itunes:owner>
+    <itunes:category text="News">
+      <itunes:category text="Daily News"/>
+    </itunes:category>
+    <item>
+      <guid isPermaLink="false">8E4BF0B0-2A7B-43C8-B99E-D2D12142B5C9</guid>
+      <title>What’s News in Markets: Anthropic IPO, Nvidia Drama, ‘GTA VI’</title>
+      <description><![CDATA[<p>How much is Anthropic actually worth? And were investors assured by Nvidia’s strong earnings report? Plus, will "Grand Theft Auto VI" lift Take-Two Interactive’s stock? Host Vicky Ge Huang discusses the biggest stock moves of the week and the news that drove them.</p>
+<p><br></p>
+<p>Sign up for the WSJ's free <a href="https://www.wsj.com/newsletters/markets-am?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">Markets A.M. newsletter</a>.</p><br/> <p>Hosted by Simplecast, an AdsWizz company. See <a href="https://pcm.adswizz.com">pcm.adswizz.com</a> for information about our collection and use of personal data for advertising.</p>]]></description>
+      <pubDate>Sat, 21 Nov 2026 11:00:00 +0000</pubDate>
+      <author>podcasts@dowjones.com (The Wall Street Journal)</author>
+      <link>https://www.wsj.com/podcasts/whats-news</link>
+      <content:encoded><![CDATA[<p>How much is Anthropic actually worth? And were investors assured by Nvidia’s strong earnings report? Plus, will "Grand Theft Auto VI" lift Take-Two Interactive’s stock? Host Vicky Ge Huang discusses the biggest stock moves of the week and the news that drove them.</p>
+<p><br></p>
+<p>Sign up for the WSJ's free <a href="https://www.wsj.com/newsletters/markets-am?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">Markets A.M. newsletter</a>.</p><br/> <p>Hosted by Simplecast, an AdsWizz company. See <a href="https://pcm.adswizz.com">pcm.adswizz.com</a> for information about our collection and use of personal data for advertising.</p>]]></content:encoded>
+      <enclosure length="5502475" type="audio/mpeg" url="https://dowjones.simplecastaudio.com/3d1c8b0a-4b6d-4ea9-a455-ab1adaa7e74b/episodes/23bb18ff-28ed-49cb-8a92-bb3265e4cf65/audio/128/default.mp3?aid=rss_feed&amp;awCollectionId=3d1c8b0a-4b6d-4ea9-a455-ab1adaa7e74b&amp;awEpisodeId=23bb18ff-28ed-49cb-8a92-bb3265e4cf65&amp;feed=BA5QWI2p"/>
+      <itunes:title>What’s News in Markets: Anthropic IPO, Nvidia Drama, ‘GTA VI’</itunes:title>
+      <itunes:author>The Wall Street Journal</itunes:author>
+      <itunes:duration>00:05:43</itunes:duration>
+      <itunes:summary></itunes:summary>
+      <itunes:subtitle></itunes:subtitle>
+      <itunes:keywords>artificial intelligence, stock market, vicky ge huang, take-two interactive, michael lavalle, tech shares, grand theft auto vi, the wall street journal, nasdaq, melony roy, jensen huang, dow, rockstar games, alphabet, ipo, what&apos;s news in markets, commerce department, nvidia, earnings, video game, s&amp;p 500, senate banking committee, claude, retail, anthropic, colette kress, revenue</itunes:keywords>
+      <itunes:explicit>false</itunes:explicit>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:episode>4648</itunes:episode>
+    </item>
+    <item>
+      <guid isPermaLink="false">E11F58B1-6E57-4E15-9915-7922343552C5</guid>
+      <title>The Week the Wheels Came Off the AI Trade</title>
+      <description><![CDATA[<p>P.M. Edition for Nov. 20. Despite Nvidia’s strong earnings and Anthropic’s record-breaking IPO this week, tech stocks had <a href="https://www.wsj.com/finance/stocks/anthropics-ipo-bust-punctuates-4-trillion-ai-wipeout-on-wall-street-f1f1ec90?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">one of their worst weeks</a> in years. Journal markets reporter <a href="https://www.wsj.com/news/author/hannah-erin-lang?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">Hannah Erin Lang</a> discusses why investors have gone cold on the AI trade. Plus, in a press conference today, President Trump, flanked by Vice President JD Vance and Secretary of State Marco Rubio, said there will be <a href="https://www.wsj.com/politics/policy/trump-to-hold-white-house-press-conference-following-trip-to-asia-25c8ecc0?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">new penalties on companies</a> that build data centers outside the U.S. We hear from White House reporter <a href="https://www.wsj.com/news/author/philip-wegmann?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">Philip Wegmann</a> about ramifications for the 2028 presidential election. And, to help solve New York City’s bathroom crisis, a company called Throne has <a href="https://www.wsj.com/tech/personal-tech/new-york-city-public-bathroom-tour-4d544375?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">installed high-tech toilets</a> across the city. Our tech columnist <a href="https://www.wsj.com/news/author/christopher-mims?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">Christopher Mims</a> visited a bunch of them and he tells us what he found. Alex Ossola hosts.</p>
+<p><br></p>
+<p>Sign up for the WSJ's free <a href="https://www.wsj.com/newsletters/whats-news?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">What's News newsletter</a>.<br></p><br/> <p>Hosted by Simplecast, an AdsWizz company. See <a href="https://pcm.adswizz.com">pcm.adswizz.com</a> for information about our collection and use of personal data for advertising.</p>]]></description>
+      <pubDate>Fri, 20 Nov 2026 22:20:00 +0000</pubDate>
+      <author>podcasts@dowjones.com (The Wall Street Journal)</author>
+      <link>https://www.wsj.com/podcasts/whats-news</link>
+      <content:encoded><![CDATA[<p>P.M. Edition for Nov. 20. Despite Nvidia’s strong earnings and Anthropic’s record-breaking IPO this week, tech stocks had <a href="https://www.wsj.com/finance/stocks/anthropics-ipo-bust-punctuates-4-trillion-ai-wipeout-on-wall-street-f1f1ec90?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">one of their worst weeks</a> in years. Journal markets reporter <a href="https://www.wsj.com/news/author/hannah-erin-lang?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">Hannah Erin Lang</a> discusses why investors have gone cold on the AI trade. Plus, in a press conference today, President Trump, flanked by Vice President JD Vance and Secretary of State Marco Rubio, said there will be <a href="https://www.wsj.com/politics/policy/trump-to-hold-white-house-press-conference-following-trip-to-asia-25c8ecc0?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">new penalties on companies</a> that build data centers outside the U.S. We hear from White House reporter <a href="https://www.wsj.com/news/author/philip-wegmann?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">Philip Wegmann</a> about ramifications for the 2028 presidential election. And, to help solve New York City’s bathroom crisis, a company called Throne has <a href="https://www.wsj.com/tech/personal-tech/new-york-city-public-bathroom-tour-4d544375?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">installed high-tech toilets</a> across the city. Our tech columnist <a href="https://www.wsj.com/news/author/christopher-mims?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">Christopher Mims</a> visited a bunch of them and he tells us what he found. Alex Ossola hosts.</p>
+<p><br></p>
+<p>Sign up for the WSJ's free <a href="https://www.wsj.com/newsletters/whats-news?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">What's News newsletter</a>.<br></p><br/> <p>Hosted by Simplecast, an AdsWizz company. See <a href="https://pcm.adswizz.com">pcm.adswizz.com</a> for information about our collection and use of personal data for advertising.</p>]]></content:encoded>
+      <enclosure length="14132496" type="audio/mpeg" url="https://dowjones.simplecastaudio.com/3d1c8b0a-4b6d-4ea9-a455-ab1adaa7e74b/episodes/e456fe44-6adc-40bd-8540-a01a31cf79f1/audio/128/default.mp3?aid=rss_feed&amp;awCollectionId=3d1c8b0a-4b6d-4ea9-a455-ab1adaa7e74b&amp;awEpisodeId=e456fe44-6adc-40bd-8540-a01a31cf79f1&amp;feed=BA5QWI2p"/>
+      <itunes:title>The Week the Wheels Came Off the AI Trade</itunes:title>
+      <itunes:author>The Wall Street Journal</itunes:author>
+      <itunes:duration>00:14:43</itunes:duration>
+      <itunes:summary></itunes:summary>
+      <itunes:subtitle></itunes:subtitle>
+      <itunes:keywords>jd vance, new york city, throne, uk, vladimir putin, skid row, michael lavalle, trump, california, queens, obama, hannah erin lang, samantha henig, european union, manhattan, mamdani, uber, jensen huang, china, aisha al-muslim, russia, los angeles, xi jinping, leital molad, philip wegmann, cooper square, nvidia, christopher mims, west virginia, alex ossola, europe, max colchester, andy burnham, tom cotton, steven miller, chris zinsli, anthony bansie, marco rubio, indiana, howard lutnick, anthropic, brussels, tali arbel, what’s news, danny lewis, texas</itunes:keywords>
+      <itunes:explicit>false</itunes:explicit>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:episode>4647</itunes:episode>
+    </item>
+    <item>
+      <guid isPermaLink="false">34FDB1E6-7090-48AA-8274-8209BAC4FC9B</guid>
+      <title>America’s Biggest Retailers Say Shoppers Keep Spending</title>
+      <description><![CDATA[<p>Bonus Episode for Nov. 20. Few companies have a pulse on the American shopper like Walmart and Target, and both got a boost in the latest quarter from healthy consumer spending—a good sign for the current quarter that contains much of the crucial holiday shopping season. Target’s <a href="https://www.wsj.com/business/retail/target-posts-strongest-sales-growth-in-years-as-focus-on-new-products-value-pays-off-4f82006d?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">turnaround is strengthening</a>, while Walmart’s <a href="https://www.wsj.com/business/earnings/walmart-wmt-3q-earnings-report-2026-6e658c54?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">growing e-commerce business is helping offset shrinking sales</a> at its U.S. stores. Both Walmart and Target raised their guidance for the year. <a href="https://www.wsj.com/news/author/sarah-nassauer?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">Sarah Nassauer</a> covers big retailers for The Wall Street Journal, and took a close look at these earnings.</p>
+<p><br></p>
+<p><a href="https://www.wsj.com/news/author/pierre-bienaime" target="_self" rel="noopener noreferrer">Pierre Bienaimé</a> hosts this special bonus episode of What's News in Earnings, where we dig into companies’ earnings reports and analyst calls to find out what’s going on under the hood of the American economy.</p>
+<p><br></p>
+<p>Sign up for the WSJ's free <a href="https://www.wsj.com/newsletters/markets-am?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">Markets A.M. newsletter</a>.</p><br/> <p>Hosted by Simplecast, an AdsWizz company. See <a href="https://pcm.adswizz.com">pcm.adswizz.com</a> for information about our collection and use of personal data for advertising.</p>]]></description>
+      <pubDate>Fri, 20 Nov 2026 17:00:00 +0000</pubDate>
+      <author>podcasts@dowjones.com (The Wall Street Journal)</author>
+      <link>https://www.wsj.com/podcasts/whats-news</link>
+      <content:encoded><![CDATA[<p>Bonus Episode for Nov. 20. Few companies have a pulse on the American shopper like Walmart and Target, and both got a boost in the latest quarter from healthy consumer spending—a good sign for the current quarter that contains much of the crucial holiday shopping season. Target’s <a href="https://www.wsj.com/business/retail/target-posts-strongest-sales-growth-in-years-as-focus-on-new-products-value-pays-off-4f82006d?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">turnaround is strengthening</a>, while Walmart’s <a href="https://www.wsj.com/business/earnings/walmart-wmt-3q-earnings-report-2026-6e658c54?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">growing e-commerce business is helping offset shrinking sales</a> at its U.S. stores. Both Walmart and Target raised their guidance for the year. <a href="https://www.wsj.com/news/author/sarah-nassauer?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">Sarah Nassauer</a> covers big retailers for The Wall Street Journal, and took a close look at these earnings.</p>
+<p><br></p>
+<p><a href="https://www.wsj.com/news/author/pierre-bienaime" target="_self" rel="noopener noreferrer">Pierre Bienaimé</a> hosts this special bonus episode of What's News in Earnings, where we dig into companies’ earnings reports and analyst calls to find out what’s going on under the hood of the American economy.</p>
+<p><br></p>
+<p>Sign up for the WSJ's free <a href="https://www.wsj.com/newsletters/markets-am?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">Markets A.M. newsletter</a>.</p><br/> <p>Hosted by Simplecast, an AdsWizz company. See <a href="https://pcm.adswizz.com">pcm.adswizz.com</a> for information about our collection and use of personal data for advertising.</p>]]></content:encoded>
+      <enclosure length="5432676" type="audio/mpeg" url="https://dowjones.simplecastaudio.com/3d1c8b0a-4b6d-4ea9-a455-ab1adaa7e74b/episodes/4db4cf3e-b4cb-448a-913c-dcc92624b157/audio/128/default.mp3?aid=rss_feed&amp;awCollectionId=3d1c8b0a-4b6d-4ea9-a455-ab1adaa7e74b&amp;awEpisodeId=4db4cf3e-b4cb-448a-913c-dcc92624b157&amp;feed=BA5QWI2p"/>
+      <itunes:title>America’s Biggest Retailers Say Shoppers Keep Spending</itunes:title>
+      <itunes:author>The Wall Street Journal</itunes:author>
+      <itunes:duration>00:05:39</itunes:duration>
+      <itunes:summary></itunes:summary>
+      <itunes:subtitle></itunes:subtitle>
+      <itunes:keywords>procter &amp; gambles, kimberly-clarks, what&apos;s news in earnings, walmart, the wall street journal, manhattan, sarah nassauer, pierre bienaimé, target, sam&apos;s club, tali arbel</itunes:keywords>
+      <itunes:explicit>false</itunes:explicit>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:episode>4646</itunes:episode>
+    </item>
+    <item>
+      <guid isPermaLink="false">94C70B05-1444-499E-9633-EDADD92D027F</guid>
+      <title>U.S. Floats NATO Membership for Ukraine</title>
+      <description><![CDATA[<p>A.M. Edition for Nov. 20. In a series of talks to end the war between Russia and Ukraine, WSJ’s chief European political correspondent <a href="https://www.wsj.com/news/author/bojan-pancevski?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">Bojan Pancevski</a> says U.S. envoys Jared Kushner and Steve Witkoff have discussed the idea of Kyiv ceding territory it controls to Russia <a href="https://www.wsj.com/world/europe/u-s-has-floated-nato-membership-for-ukraine-in-recent-meetings-d5c8243a?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">in exchange for NATO membership</a>, something Vladimir Putin and President Trump have previously rejected. Plus, Sean Cairncross is <a href="https://www.wsj.com/politics/policy/white-house-replaces-cybersecurity-official-after-tech-outages-52b1c8ce?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">leaving his role coordinating cybersecurity policy,</a> as the Trump administration responds to a wave of cyber threats. And the Senate passes a bipartisan bill aimed at speeding up energy projects, <a href="https://www.wsj.com/politics/policy/senate-passes-measure-designed-to-speed-up-energy-projects-lower-consumer-costs-dcacc9c6?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">overcoming concerns</a> it would weaken environmental protection laws. Luke Vargas hosts.</p>
+<p><br></p>
+<p>Sign up for WSJ’s free <a href="https://www.wsj.com/newsletters/whats-news?mod=WSJ_MBPOD" target="_self" rel="noopener noreferrer">What’s News newsletter</a>.<br><br></p><br/> <p>Hosted by Simplecast, an AdsWizz company. See <a href="https://pcm.adswizz.com">pcm.adswizz.com</a> for information about our collection and use of personal data for advertising.</p>]]></description>
+      <pubDate>Fri, 20 Nov 2026 11:16:00 +0000</pubDate>
+      <author>podcasts@dowjones.com (The Wall Street Journal)</author>
+      <link>https://www.wsj.com/podcasts/whats-news</link>
+      <content:encoded><![CDATA[<p>A.M. Edition for Nov. 20. In a series of talks to end the war between Russia and Ukraine, WSJ’s chief European political correspondent <a href="https://www.wsj.com/news/author/bojan-pancevski?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">Bojan Pancevski</a> says U.S. envoys Jared Kushner and Steve Witkoff have discussed the idea of Kyiv ceding territory it controls to Russia <a href="https://www.wsj.com/world/europe/u-s-has-floated-nato-membership-for-ukraine-in-recent-meetings-d5c8243a?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">in exchange for NATO membership</a>, something Vladimir Putin and President Trump have previously rejected. Plus, Sean Cairncross is <a href="https://www.wsj.com/politics/policy/white-house-replaces-cybersecurity-official-after-tech-outages-52b1c8ce?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">leaving his role coordinating cybersecurity policy,</a> as the Trump administration responds to a wave of cyber threats. And the Senate passes a bipartisan bill aimed at speeding up energy projects, <a href="https://www.wsj.com/politics/policy/senate-passes-measure-designed-to-speed-up-energy-projects-lower-consumer-costs-dcacc9c6?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">overcoming concerns</a> it would weaken environmental protection laws. Luke Vargas hosts.</p>
+<p><br></p>
+<p>Sign up for WSJ’s free <a href="https://www.wsj.com/newsletters/whats-news?mod=WSJ_MBPOD" target="_self" rel="noopener noreferrer">What’s News newsletter</a>.<br><br></p><br/> <p>Hosted by Simplecast, an AdsWizz company. See <a href="https://pcm.adswizz.com">pcm.adswizz.com</a> for information about our collection and use of personal data for advertising.</p>]]></content:encoded>
+      <enclosure length="13086952" type="audio/mpeg" url="https://dowjones.simplecastaudio.com/3d1c8b0a-4b6d-4ea9-a455-ab1adaa7e74b/episodes/bf28a712-9e3b-4df3-92ba-865c2b72e9a2/audio/128/default.mp3?aid=rss_feed&amp;awCollectionId=3d1c8b0a-4b6d-4ea9-a455-ab1adaa7e74b&amp;awEpisodeId=bf28a712-9e3b-4df3-92ba-865c2b72e9a2&amp;feed=BA5QWI2p"/>
+      <itunes:title>U.S. Floats NATO Membership for Ukraine</itunes:title>
+      <itunes:author>The Wall Street Journal</itunes:author>
+      <itunes:duration>00:13:36</itunes:duration>
+      <itunes:summary></itunes:summary>
+      <itunes:subtitle></itunes:subtitle>
+      <itunes:keywords>new york city, chinese, daniel bach, defense department, vladimir putin, air force one, alice huang, shelly moore capito, x, what&apos;s news in earnings, sean cairncross, trump, california, u.s., steve witkoff, new york, republican, wsj, san antonio, americans, germany, new yorkers, german, senate, mamdani, delivery protection act, democrats, zelensky, ukrainian, jensen huang, china, asia, russia, white house, city council, attom, jared kushner, boyan, national cyber director, kirsten davies, luke vargas, ukraine, ai, steve whitkov, ipo, russians, volodymyr zelensky, berlin, congress, nvidia, native american, donbass, zohran mamdani, rob bonta, american, west virginia, europe, house, san francisco, washington, softbank, japan, nato, article five, ukrainians, openai, european, nyc council, liberation day, russian, black friday, jezz bezos, asml, bojan pancevski, kyiv, pittsburgh, america, wall street journal, anthropic, securities and exchange commission, emmanuel macron, kris frieswick, what’s news, nikkei, boyan ponchevsky, capito, hattie moir, texas, amazon, france</itunes:keywords>
+      <itunes:explicit>false</itunes:explicit>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:episode>4645</itunes:episode>
+    </item>
+    <item>
+      <guid isPermaLink="false">435D3A1E-CF0A-4B99-8CFF-7011232A1EC2</guid>
+      <title>Anthropic Pulls Off Historic IPO, But AI Doubts Remain</title>
+      <description><![CDATA[<p>P.M. Edition for Nov. 19. Anthropic <a href="https://www.wsj.com/finance/stocks/what-to-know-about-anthropics-record-breaking-ipo-372a1fec?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">completed its record-breaking IPO</a>, with shares closing up 17%. WSJ Heard on the Street writer <a href="https://www.wsj.com/news/author/asa-fitch?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">Asa Fitch</a> tells us some of the <a href="https://www.wsj.com/tech/ai/thousands-of-anthropic-employees-and-investors-are-set-to-reap-fortunes-d9c3c6ed?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">biggest winners</a> of the day–and why all the buzz around the company wasn’t enough to prevent a broad market selloff. Plus, <a href="https://www.wsj.com/news/author/jennifer-hiller?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">Jennifer Hiller</a>, who covers the power industry for the Journal, explains how the AI boom’s data centers are expected to <a href="https://www.wsj.com/business/energy-oil/see-how-data-centers-became-the-growth-engine-of-americas-power-grid-70399f64?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">push commercial electricity use higher</a> than residential use this year–the first time that’s happened. And we hear from Journal reporter <a href="https://www.wsj.com/news/author/feliz-solomon?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">Feliz Solomon</a> on the legal precedent established by the ruling today that <a href="https://www.wsj.com/world/asia/world-court-finds-myanmar-committed-genocide-against-rohingya-6fa7e663?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">Myanmar committed genocide</a> against its Rohingya Muslim minority. Alex Ossola hosts.</p>
+<p><br></p>
+<p><a href="https://open.spotify.com/playlist/6led0d84hxzD4SFsv6quJG?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">The Journal’s Camp Swamp Road</a></p>
+<p><br></p>
+<p>Sign up for the WSJ's free <a href="https://www.wsj.com/newsletters/whats-news?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">What's News newsletter</a>.</p><br/> <p>Hosted by Simplecast, an AdsWizz company. See <a href="https://pcm.adswizz.com">pcm.adswizz.com</a> for information about our collection and use of personal data for advertising.</p>]]></description>
+      <pubDate>Thu, 19 Nov 2026 22:39:00 +0000</pubDate>
+      <author>podcasts@dowjones.com (The Wall Street Journal)</author>
+      <link>https://www.wsj.com/podcasts/whats-news</link>
+      <content:encoded><![CDATA[<p>P.M. Edition for Nov. 19. Anthropic <a href="https://www.wsj.com/finance/stocks/what-to-know-about-anthropics-record-breaking-ipo-372a1fec?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">completed its record-breaking IPO</a>, with shares closing up 17%. WSJ Heard on the Street writer <a href="https://www.wsj.com/news/author/asa-fitch?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">Asa Fitch</a> tells us some of the <a href="https://www.wsj.com/tech/ai/thousands-of-anthropic-employees-and-investors-are-set-to-reap-fortunes-d9c3c6ed?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">biggest winners</a> of the day–and why all the buzz around the company wasn’t enough to prevent a broad market selloff. Plus, <a href="https://www.wsj.com/news/author/jennifer-hiller?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">Jennifer Hiller</a>, who covers the power industry for the Journal, explains how the AI boom’s data centers are expected to <a href="https://www.wsj.com/business/energy-oil/see-how-data-centers-became-the-growth-engine-of-americas-power-grid-70399f64?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">push commercial electricity use higher</a> than residential use this year–the first time that’s happened. And we hear from Journal reporter <a href="https://www.wsj.com/news/author/feliz-solomon?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">Feliz Solomon</a> on the legal precedent established by the ruling today that <a href="https://www.wsj.com/world/asia/world-court-finds-myanmar-committed-genocide-against-rohingya-6fa7e663?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">Myanmar committed genocide</a> against its Rohingya Muslim minority. Alex Ossola hosts.</p>
+<p><br></p>
+<p><a href="https://open.spotify.com/playlist/6led0d84hxzD4SFsv6quJG?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">The Journal’s Camp Swamp Road</a></p>
+<p><br></p>
+<p>Sign up for the WSJ's free <a href="https://www.wsj.com/newsletters/whats-news?mod=WSJ_WNPOD" target="_self" rel="noopener noreferrer">What's News newsletter</a>.</p><br/> <p>Hosted by Simplecast, an AdsWizz company. See <a href="https://pcm.adswizz.com">pcm.adswizz.com</a> for information about our collection and use of personal data for advertising.</p>]]></content:encoded>
+      <enclosure length="14138348" type="audio/mpeg" url="https://dowjones.simplecastaudio.com/3d1c8b0a-4b6d-4ea9-a455-ab1adaa7e74b/episodes/31f409df-2d7d-4f74-b02e-d09a0eacefad/audio/128/default.mp3?aid=rss_feed&amp;awCollectionId=3d1c8b0a-4b6d-4ea9-a455-ab1adaa7e74b&amp;awEpisodeId=31f409df-2d7d-4f74-b02e-d09a0eacefad&amp;feed=BA5QWI2p"/>
+      <itunes:title>Anthropic Pulls Off Historic IPO, But AI Doubts Remain</itunes:title>
+      <itunes:author>The Wall Street Journal</itunes:author>
+      <itunes:duration>00:14:43</itunes:duration>
+      <itunes:summary></itunes:summary>
+      <itunes:subtitle></itunes:subtitle>
+      <itunes:keywords>wsj arts in review, comedy, theater, photography, new york city, artificial intelligence, cunk on cinema, brian p. kelly, cinema, stock market, protests, un security council, james gray, wsj podcasts, the journal podcast, united nations, lightspeed, camp swamp road, arts and culture, electricity, valuation, italian mob, what&apos;s news in earnings, icj, pbs, international law, recursive self-improvement, murder, r&amp;b, movies, data centers, walmart, the wall street journal, ai infrastructure, new york, refugees, wsj, un, world court, richard avedon, melony roy, documentary, benedict cumberbatch, road rage, snoh aalegra, adam driver, wsj arts &amp; culture drop, holidays, initial public offering, nicholas hoult, bronx, advertising, michael bay, diane morgan, gaza, october 7, commercial electricity, online shopping, alexis moore, organized crime, hamas, ai, electric grid, netflix, bangladesh, epri, ipo, charles isherwood, energy information administration, holocaust, min aung hlaing, brooklyn, rakhine, international court of justice, nvidia, ai safety, philomena cunk, paper tiger, film, mockumentary, tech stocks, iconiq, earnings, alex ossola, miles teller, nothing compares, heard on the street, san francisco, holiday train show, eia, russian mafia, crime, myanmar, just friends, openai, ai models, energy, gowanus canal, investing, podcasts, united states, asa fitch, anthony bansie, broadway, legendary love, supernova, israel, genocide, retail, us, power grid, google, feliz solomon, kyle smith, anthropic, e-commerce, thanksgiving, south carolina, rohingya, scott spivey, electric power research institute, weldon boyd, music, here there are blueberries, the journal, tali arbel, bradley williams, jennifer hiller, how to rob a bank, john anderson, what’s news, crime drama, christmas, danny lewis, wsj.com, new york botanical garden, amazon, venture capital</itunes:keywords>

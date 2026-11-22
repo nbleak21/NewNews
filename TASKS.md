@@ -111,7 +111,7 @@ each one file + one test file. Do them in order. -->
   write path creates `build/<token>/feed.xml`, records episodes in state,
   and the second run does not repeat already-used episodes. No network.
 
-- [ ] **9. Verify real feed URLs and fill in the config**
+- [x] **9. Verify real feed URLs and fill in the config**
   For each source, find the Apple podcast id, call the lookup API, and record
   the returned `feedUrl`. Create `config/sources.yaml`. Save one small trimmed
   sample of each feed as a fixture. This task needs the network; tests still

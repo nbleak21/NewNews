@@ -102,20 +102,29 @@ sources:
     name: "Morning Wire"
     lean: right
     priority: 3
-    feed_url: "TODO_VERIFY"
+    feed_url: "https://rss.pdrl.fm/3f8a3d/feeds.megaphone.fm/BVDWV8747925072"  # Apple ID: 1576594336
 
   - id: up_first
     name: "Up First from NPR"
     lean: center-left
     priority: 3
-    feed_url: "TODO_VERIFY"
+    feed_url: "https://feeds.npr.org/510318/podcast.xml"  # Apple ID: 1222114325
 
   - id: the_daily
     name: "The Daily"
     lean: center-left
     priority: 4
-    feed_url: "TODO_VERIFY"
+    feed_url: "https://feeds.simplecast.com/Sl5CSM3S"  # Apple ID: 1200361736
 
 # HINT: to add a source, copy a block, give it a unique `id`, and leave
 # feed_url as TODO_VERIFY until you have confirmed it. The loader must reject
 # TODO_VERIFY at run time so a placeholder can never be fetched.
+
+# ---- Verified Apple podcast IDs (for reference) ----
+# fox_news_rundown: 1303660358 -> https://feeds.megaphone.fm/FOXM1880458659
+# npr_news_now: 121493675 -> https://feeds.npr.org/500005/podcast.xml
+# wsj_whats_news: 152016440 -> https://video-api.shdsvc.dowjones.io/api/podcasts/the%20wall%20street%20journal%20whats%20news/feed
+# bbc_global_news: 135067274 -> https://podcasts.files.bbci.co.uk/p02nq0gn.rss
+# morning_wire: 1576594336 -> https://rss.pdrl.fm/3f8a3d/feeds.megaphone.fm/BVDWV8747925072
+# up_first: 1222114325 -> https://feeds.npr.org/510318/podcast.xml
+# the_daily: 1200361736 -> https://feeds.simplecast.com/Sl5CSM3S

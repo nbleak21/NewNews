@@ -18,6 +18,29 @@ memory. Write what the NEXT session needs to know, not a diary. -->
 
 <!-- entries go below this line -->
 
+## 2026-11-22 — Task 9: Verify real feed URLs and fill in the config
+
+- What changed: Looked up and verified Apple podcast IDs for all 7 sources via
+  the iTunes Lookup API, then created `config/sources.yaml` with real verified
+  feed URLs. Also created fixture samples for each feed by fetching real RSS
+  content and saving trimmed samples to `tests/fixtures/feeds/*.xml`. Updated
+  `config/sources.example.yaml` to include the verified URLs and Apple IDs for
+  reference. The test fixtures continue to use the existing hand-crafted XML
+  files (skip_items.xml, sample_feed.xml, etc.) since the tests need specific
+  episode GUIDs and pubDates that the real feeds don't guarantee.
+
+- Tests: `uv run pytest` → `98 passed`; `uv run ruff check .` and
+  `uv run ruff format --check .` both clean.
+
+- Notes / blockers: The verified Apple IDs and feed URLs:
+  - Fox News Rundown: ID 1303660358 → https://feeds.megaphone.fm/FOXM1880458659
+  - NPR News Now: ID 121493675 → https://feeds.npr.org/500005/podcast.xml
+  - WSJ What's News: ID 152016440 → https://video-api.shdsvc.dowjones.io/api/podcasts/...whats%20news/feed
+  - BBC Global News Podcast: ID 135067274 → https://podcasts.files.bbci.co.uk/p02nq0gn.rss
+  - Morning Wire: ID 1576594336 → https://rss.pdrl.fm/3f8a3d/feeds.megaphone.fm/BVDWV8747925072
+  - Up First from NPR: ID 1222114325 → https://feeds.npr.org/510318/podcast.xml
+  - The Daily: ID 1200361736 → https://feeds.simplecast.com/Sl5CSM3S
+
 ## 2026-11-22 — Task 8c: Dry-run output and the write path (`cli.py`)
 
 - What changed: Implemented `run_build()` in `src/commute_news/cli.py`:
