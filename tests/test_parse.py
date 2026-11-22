@@ -9,6 +9,8 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from pathlib import Path
 
+import pytest
+
 from commute_news.parse import (
     DEFAULT_ASSUMED_BITRATE_KBPS,
     estimate_duration_from_length,
@@ -106,3 +108,44 @@ def test_episode_passes_the_enclosure_through() -> None:
     assert episode.enclosure_type == "audio/mpeg"
     assert episode.enclosure_length == 1000
     assert episode.guid == "keep-001"
+
+
+# --- enclosure type / malformed input edge cases ----------------------------
+
+
+def _one_item(enclosure: str, *, guid: str = "g1") -> bytes:
+    return (
+        "<?xml version='1.0'?><rss version='2.0' "
+        "xmlns:itunes='http://www.itunes.com/dtds/podcast-1.0.dtd'>"
+        "<channel><title>T</title>"
+        f"<item><guid>{guid}</guid><title>Ep</title>"
+        "<pubDate>Thu, 19 Nov 2026 07:00:00 GMT</pubDate>"
+        "<itunes:duration>600</itunes:duration>"
+        f"{enclosure}</item></channel></rss>"
+    ).encode()
+
+
+def test_non_audio_enclosure_is_skipped() -> None:
+    # An image/video enclosure must not be mistaken for the episode's audio.
+    xml = _one_item(
+        "<enclosure url='https://media.example.test/cover.jpg' type='image/jpeg' length='1000'/>"
+    )
+    assert parse_feed("s", xml) == []
+
+
+def test_enclosure_without_a_type_is_accepted() -> None:
+    xml = _one_item(
+        "<enclosure url='https://media.example.test/a.mp3' length='1000'/>", guid="notype"
+    )
+    assert [e.guid for e in parse_feed("s", xml)] == ["notype"]
+
+
+def test_empty_and_malformed_feeds_yield_no_episodes() -> None:
+    assert parse_feed("s", b"") == []
+    assert parse_feed("s", b"<rss><channel></channel></rss>") == []
+    assert parse_feed("s", b"<not valid xml") == []
+
+
+def test_estimate_duration_rejects_non_positive_bitrate() -> None:
+    with pytest.raises(ValueError):
+        estimate_duration_from_length(1000, 0)

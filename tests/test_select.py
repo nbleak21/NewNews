@@ -242,3 +242,31 @@ def test_select_lineup_with_everything_used_is_empty() -> None:
     lineup = select_lineup(episodes, sources, used, NOW, cfg(sources))
     assert lineup.episodes == ()
     assert lineup.total_seconds == 0
+
+
+# --- robustness / edge cases ------------------------------------------------
+
+
+def test_oversized_top_candidate_is_skipped_for_a_fitting_one() -> None:
+    # Regression: the top-ranked candidate alone exceeds the ceiling; a shorter
+    # later candidate must still be picked instead of an empty lineup.
+    oversized = ep("a", "too-long", duration=45 * 60)  # 45 min > 30 min ceiling
+    fits = ep("b", "fits", duration=600)  # 10 min
+    lineup = fill_to_target([oversized, fits], 25, 20, 30)
+    assert [e.guid for e in lineup.episodes] == ["fits"]
+    assert lineup.total_seconds == 600
+
+
+def test_eligible_episodes_rejects_bad_params() -> None:
+    with pytest.raises(ValueError):
+        eligible_episodes([], set(), NOW, freshness_hours=-1, max_per_source=1)
+    with pytest.raises(ValueError):
+        eligible_episodes([], set(), NOW, freshness_hours=2, max_per_source=0)
+
+
+def test_order_candidates_ranks_unknown_source_last() -> None:
+    # An episode whose source is not in `sources` is ranked last, never dropped.
+    known = ep("known", "k1")
+    orphan = ep("ghost", "o1")
+    ordered = order_candidates([orphan, known], [src("known")])
+    assert [e.guid for e in ordered] == ["k1", "o1"]

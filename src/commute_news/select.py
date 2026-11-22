@@ -115,11 +115,11 @@ def fill_to_target(
 ) -> Lineup:
     """Add candidates in order until the total reaches ``target_minutes``.
 
-    Never exceeds ``max_minutes``: the first candidate that does not fit under
-    the ceiling ends the fill, so the result is always a prefix of
-    ``candidates``. A short result (candidates exhausted, or the next one would
-    break the ceiling) is returned as-is; the caller decides whether it is
-    shorter than ``min_minutes``.
+    Never exceeds ``max_minutes``: a candidate that would break the ceiling is
+    skipped (not a hard stop), so a shorter later candidate can still fill the
+    lineup -- the result is therefore not necessarily a prefix. Filling stops
+    once ``target_minutes`` is reached. A short result (candidates exhausted) is
+    returned as-is; the caller decides whether it is shorter than ``min_minutes``.
 
     Raises ``ValueError`` unless ``0 <= min_minutes <= target_minutes <=
     max_minutes``.
@@ -139,7 +139,7 @@ def fill_to_target(
         if total >= target_seconds:
             break
         if total + episode.duration > max_seconds:
-            break
+            continue  # too long for the ceiling; a shorter later one may still fit
         chosen.append(episode)
         total += episode.duration
     return Lineup(episodes=tuple(chosen), total_seconds=total)

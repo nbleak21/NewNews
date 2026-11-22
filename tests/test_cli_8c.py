@@ -214,5 +214,8 @@ class TestWritePath:
             used_guids=used,
         )
 
-        # Second run should have fewer episodes (or empty if all were used)
-        assert len(lineup2.episodes) < len(lineup1.episodes)
+        # Second run must not repeat ANY of the first run's episodes (a shrink
+        # in count alone would pass even if one episode were re-served).
+        run1 = {e.guid for e in lineup1.episodes}
+        run2 = {e.guid for e in lineup2.episodes}
+        assert run1.isdisjoint(run2), f"second run repeated episodes: {run1 & run2}"

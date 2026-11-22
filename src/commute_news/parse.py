@@ -161,12 +161,22 @@ def _entry_title(entry) -> str:
 
 
 def _audio_enclosure(entry) -> dict | None:
-    """First enclosure that points at audio, or ``None``."""
+    """First enclosure that points at audio, or ``None``.
+
+    An enclosure that declares a type is kept only when it is ``audio/*`` (so an
+    image or video enclosure is not mistaken for the episode). An enclosure with
+    no declared type is accepted as a fallback, since some feeds omit it.
+    """
+    fallback = None
     for enclosure in entry.get("enclosures") or []:
-        url = _enclosure_url(enclosure)
-        if url:
+        if not _enclosure_url(enclosure):
+            continue
+        etype = str(enclosure.get("type") or "")
+        if etype.lower().startswith("audio/"):
             return enclosure
-    return None
+        if not etype and fallback is None:
+            fallback = enclosure
+    return fallback
 
 
 def _enclosure_url(enclosure) -> str:
