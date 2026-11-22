@@ -169,3 +169,24 @@ memory. Write what the NEXT session needs to know, not a diary. -->
   rather than the wall clock so retention is testable. `retain_hours` is
   still the single retention knob; the 3-hour default here is only the
   fallback when no config is supplied. No network, no new dependencies.
+
+## 2026-11-21 — Task 8a: CLI argument parser and dispatch (`cli.py`)
+
+- What changed: implemented `build_parser()` in `src/commute_news/cli.py`
+  (argparse with a required `build` subcommand; `--config` defaults to
+  `config/sources.yaml`, `--dry-run` is a `store_true`) and
+  `main(argv)`, which parses the arguments, configures logging and returns
+  `run_build(config_path, dry_run)`'s int exit code. `run_build` and
+  `notify_failure` still raise `NotImplementedError` (tasks 8b/8c and 12
+  fill them in). Module constants `DEFAULT_CONFIG`, `LOG_LEVEL` and
+  `LOG_FORMAT` keep the defaults in one place. Added `tests/test_cli.py`
+  (6 tests) covering the defaults, `--dry-run`, `--config X`, the two
+  combined, and that the `build` subcommand is required and unknown flags
+  are rejected. No fixtures needed; nothing is fetched or written.
+- Tests: `uv run pytest` → `91 passed`; `uv run ruff check .` and
+  `uv run ruff format --check .` both clean.
+- Notes / blockers: the tests deliberately do NOT call `main` /
+  `run_build` end to end yet — task 8b wires it. `--config` belongs to the
+  `build` subcommand, so it must follow `build` on the command line
+  (`commute-news build --config X`), and a bare `commute-news` is a usage
+  error rather than a silent no-op.

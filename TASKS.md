@@ -65,7 +65,7 @@ If a task feels big, split it before starting rather than half-finishing it. -->
 too big for one session (it half-finished three times). Split into 8a/8b/8c,
 each one file + one test file. Do them in order. -->
 
-- [ ] **8a. CLI argument parser and dispatch** (`cli.py`)
+- [x] **8a. CLI argument parser and dispatch** (`cli.py`)
   Implement `build_parser()` only: an `argparse` parser for
   `commute-news build [--config PATH] [--dry-run]`. `--config` defaults to
   `config/sources.yaml`; `--dry-run` is a `store_true` flag. `main(argv=None)`
