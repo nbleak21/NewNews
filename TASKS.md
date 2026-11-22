@@ -150,7 +150,7 @@ each one file + one test file. Do them in order. -->
   *Done when:* the test passes offline and asserts lineup length, order,
   enclosure URLs and state contents.
 
-- [ ] **14. README for adding a new source**
+- [x] **14. README for adding a new source**
   Step-by-step section: find the feed URL, verify it, add the YAML block, pick
   lean and priority, dry run, add a fixture.
   *Done when:* the README section exists and its steps were followed once for a

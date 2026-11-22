@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>AP News Now</title>
+    <link>https://www.apnews.com/podcasts</link>
+    <description>The Associated Press brings you quick, fact-based news from around the world. Hosted by AP journalists, AP News Now delivers timely updates on top stories, politics, business, and more.</description>
+    <language>en-us</language>
+    <copyright>2024 The Associated Press</copyright>
+    <itunes:author>Associated Press</itunes:author>
+    <itunes:category text="News"/>
+    <itunes:explicit>no</itunes:explicit>
+    <itunes:summary>The Associated Press brings you quick, fact-based news from around the world. Hosted by AP journalists, AP News Now delivers timely updates on top stories, politics, business, and more.</itunes:summary>
+    <item>
+      <title>Today's Top Stories: November 22, 2026</title>
+      <description>Highlights from The Associated Press: breaking news, politics, business, and more. Brought to you by AP journalists.</description>
+      <pubDate>Sun, 22 Nov 2026 09:00:00 GMT</pubDate>
+      <guid isPermaLink="false">ap-news-2026-11-22-top-stories</guid>
+      <enclosure url="https://audio.ap.org/apnewsapod/20261122/apnewsnow_20261122-090000.mp3" length="3500000" type="audio/mpeg"/>
+      <itunes:duration>08:30</itunes:duration>
+    </item>
+    <item>
+      <title>Politics Roundup: Weekly Summary</title>
+      <description>Weekly recap of key political developments from The Associated Press.</description>
+      <pubDate>Sat, 21 Nov 2026 12:00:00 GMT</pubDate>
+      <guid isPermaLink="false">ap-news-2026-11-21-politics-roundup</guid>
+      <enclosure url="https://audio.ap.org/apnewsapod/20261121/apnewsnow_20261121-120000.mp3" length="2800000" type="audio/mpeg"/>
+      <itunes:duration>06:15</itunes:duration>
+    </item>
+    <item>
+      <title>Global Business: Market Updates</title>
+      <description>Business news and market updates from The Associated Press worldwide.</description>
+      <pubDate>Fri, 20 Nov 2026 15:00:00 GMT</pubDate>
+      <guid isPermaLink="false">ap-news-2026-11-20-global-business</guid>
+      <enclosure url="https://audio.ap.org/apnewsapod/20261120/apnewsnow_20261120-150000.mp3" length="3100000" type="audio/mpeg"/>
+      <itunes:duration>07:00</itunes:duration>
+    </item>
+  </channel>
+</rss>

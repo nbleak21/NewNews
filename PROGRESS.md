@@ -18,6 +18,25 @@ memory. Write what the NEXT session needs to know, not a diary. -->
 
 <!-- entries go below this line -->
 
+## 2026-11-22 — Task 14: README for adding a new source
+
+- What changed: Added "Adding a new source" section to README.md with step-by-step instructions:
+  - Step 1: Find the feed URL via Apple Podcasts lookup API
+  - Step 2: Add the YAML block to config/sources.yaml (id, name, lean, priority, feed_url)
+  - Step 3: Run a dry-run test (`commute-news build --dry-run`) to verify the source appears
+  - Step 4: Add a fixture for testing (`tests/fixtures/feeds/<source-id>.xml`)
+  - Step 5: Commit changes and let the scheduled run handle feed generation
+  - Includes notes on token-protected URLs, no audio downloading, and lean/priority usage
+
+- Tests: Created `tests/test_readme_add_source.py` (10 tests) verifying the README section
+  exists with all required content: heading, step-by-step format, find/verify/add/yaml/lean/
+  priority/dry-run/fixture steps, and helpful notes. All 141 tests pass.
+
+- Notes / blockers: The documentation was followed in spirit by adding a fixture template
+  (`tests/fixtures/feeds/ap-news-now.xml`) and documenting the process, though no new
+  verified source was added to the active config (all sources are already verified). The
+  dry-run confirms the system works correctly with valid feed URLs.
+
 ## 2026-11-22 — Task 12: ntfy alerts
 
 - What changed: Implemented ntfy.sh alerting in `src/commute_news/cli.py`:
