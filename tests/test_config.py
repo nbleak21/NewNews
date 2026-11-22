@@ -176,3 +176,14 @@ def test_slot_for_time_picks_the_containing_slot() -> None:
     assert slot_for_time(cfg, datetime(2026, 11, 21, 13, 0)).label == "PM"
     assert slot_for_time(cfg, datetime(2026, 11, 21, 3, 0)) is None
     assert slot_for_time(cfg, datetime(2026, 11, 21, 19, 0)) is None
+
+
+def test_slot_boundaries_and_handoff() -> None:
+    cfg = load_config(FULL)
+    # PM slot (12:00-18:15) is inclusive on both ends.
+    assert slot_for_time(cfg, datetime(2026, 11, 21, 12, 0)).label == "PM"
+    assert slot_for_time(cfg, datetime(2026, 11, 21, 18, 15)).label == "PM"
+    # One minute past the PM end: no slot.
+    assert slot_for_time(cfg, datetime(2026, 11, 21, 18, 16)) is None
+    # AM->PM handoff is seamless: 11:59 is AM, 12:00 is PM.
+    assert slot_for_time(cfg, datetime(2026, 11, 21, 11, 59)).label == "AM"

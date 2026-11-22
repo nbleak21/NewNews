@@ -331,7 +331,7 @@ def _write_feed_and_state(
         seen.add(row["guid"])
         items.append(row)
 
-    pub_dates = ordered_pubdates(base=now, count=len(items), step_seconds=5)
+    pub_dates = ordered_pubdates(base=now, count=len(items))  # default DEFAULT_STEP_SECONDS
     feed_items = [
         FeedItem(
             title=format_title(

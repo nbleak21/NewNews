@@ -162,3 +162,58 @@ def test_slot_selection_uses_config_timezone(
     lineup = run_build(config_path=str(cfg), dry_run=True, client=client, now=now, used_guids=set())
     # Empty on the old UTC-based code (15:00 > 11:59); selected after the fix.
     assert [e.guid for e in lineup.episodes] == ["ep-1"]
+
+
+# --- conditional GET: validators are stored, sent, and 304 is handled -------
+
+
+def test_conditional_get_revalidates_on_second_run(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Run 1 stores an ETag; run 2 sends If-None-Match and a 304 is handled."""
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("NEWNEWS_FEED_TOKEN", "cg-token")
+    cfg = tmp_path / "cfg.yaml"
+    cfg.write_text(
+        "timezone: 'UTC'\n"
+        "freshness_hours: 6\n"
+        "retain_hours: 6\n"
+        "slots:\n"
+        "  all:\n"
+        "    label: AM\n"
+        "    start: '00:00'\n"
+        "    end: '23:59'\n"
+        "    sources: all\n"
+        "sources:\n"
+        "  - id: s1\n"
+        "    name: S1\n"
+        "    lean: center\n"
+        "    priority: 1\n"
+        "    feed_url: 'https://example.com/s1.xml'\n"
+    )
+    now = datetime(2026, 11, 19, 12, 0, tzinfo=UTC)
+    body = _one_episode_feed("Thu, 19 Nov 2026 11:30:00 GMT", "ep-1")
+    requests: list[dict[str, str]] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        requests.append(dict(request.headers))
+        if request.headers.get("if-none-match") == '"v1"':
+            return httpx.Response(304)
+        return httpx.Response(200, content=body, headers={"ETag": '"v1"'})
+
+    def make_client() -> httpx.Client:
+        return httpx.Client(transport=httpx.MockTransport(handler))
+
+    # Run 1: 200 + ETag; the episode is selected and its validator stored.
+    lineup1 = run_build(config_path=str(cfg), dry_run=False, client=make_client(), now=now)
+    assert [e.guid for e in lineup1.episodes] == ["ep-1"]
+    assert "if-none-match" not in requests[0]
+
+    # Run 2: must send the stored ETag; the server answers 304.
+    lineup2 = run_build(config_path=str(cfg), dry_run=False, client=make_client(), now=now)
+    assert requests[-1].get("if-none-match") == '"v1"'
+    assert lineup2.episodes == ()  # 304 -> no body, and ep-1 is already used
+
+    # The retained feed still carries ep-1 from run 1.
+    feed = (tmp_path / "build" / "cg-token" / "feed.xml").read_bytes()
+    assert b"ep-1" in feed

@@ -16,6 +16,7 @@ import pytest
 
 from commute_news.feedwriter import (
     DEFAULT_RETAIN_HOURS,
+    DEFAULT_STEP_SECONDS,
     FeedItem,
     format_title,
     ordered_pubdates,
@@ -184,6 +185,11 @@ def test_no_items_still_renders_well_formed_xml() -> None:
 
 def test_default_retention_is_three_hours() -> None:
     assert DEFAULT_RETAIN_HOURS == 3
+
+
+def test_default_pubdate_step_is_five_seconds() -> None:
+    # cli.py relies on this default spacing (it no longer hardcodes 5).
+    assert DEFAULT_STEP_SECONDS == 5
 
 
 def test_items_older_than_retain_hours_are_dropped() -> None:
