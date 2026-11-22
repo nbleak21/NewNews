@@ -119,6 +119,14 @@ notify() {
 #   the source and test trees. Qwen3-Coder-Next's large context absorbs this;
 #   tighten to the task's module later if you want leaner runs.
 run_agent() {
+  # Aider wants FILES, not directories ("src/commute_news is a directory, not
+  # provided alone"). Expand the trees here; nullglob so an empty match vanishes
+  # instead of being handed to aider as a literal, non-existent path.
+  shopt -s nullglob
+  local aider_files=(AGENTS.md TASKS.md PROGRESS.md
+    src/commute_news/*.py
+    tests/*.py tests/fixtures/*.yaml tests/fixtures/feeds/*.xml)
+  shopt -u nullglob
   aider \
     --model "$AIDER_MODEL" \
     --openai-api-base "$LLAMA_BASE_URL" \
@@ -131,7 +139,7 @@ run_agent() {
     --test-cmd "uv run pytest" \
     --auto-test \
     --message "$PROMPT" \
-    AGENTS.md TASKS.md PROGRESS.md src/commute_news tests \
+    "${aider_files[@]}" \
     >> "$LOG" 2>&1 &
   local pid=$!
   ( sleep $((ITER_TIMEOUT_MIN * 60)); kill "$pid" 2>/dev/null ) &
