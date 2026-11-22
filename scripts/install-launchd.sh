@@ -27,12 +27,14 @@ usage() {
 # Check for America/Chicago timezone
 check_timezone() {
   local current_tz
-  current_tz=$(tzutil get 2>/dev/null || date +%Z)
+  # macOS keeps the active zone as a symlink to its zoneinfo file; the IANA name
+  # is the tail of that path. (tzutil is a Windows command, not macOS.)
+  current_tz=$(readlink /etc/localtime 2>/dev/null | sed 's#.*/zoneinfo/##')
   
-  if [[ "$current_tz" != "America/Chicago" && "$current_tz" != "CDT" && "$current_tz" != "CST" ]]; then
-    echo "WARNING: System timezone is $current_tz, not America/Chicago" >&2
-    echo "The launchd schedule will run in system time." >&2
-    echo "Consider switching to America/Chicago for the scheduled times to match your intent." >&2
+  if [[ "$current_tz" != "America/Chicago" ]]; then
+    echo "WARNING: System timezone is '${current_tz:-unknown}', not America/Chicago" >&2
+    echo "launchd runs the schedule in system time, so the 04:15-18:15 run times" >&2
+    echo "will not match your intent unless the Mac is on America/Chicago." >&2
     echo "" >&2
   fi
 }
@@ -52,6 +54,8 @@ plist = {
     "Program": str(repo_dir / "scripts" / "run.sh"),
     "RunAtLoad": False,
     "KeepAlive": False,
+    # 15 entries, one per hour 04:15..18:15. Keep in sync with the `schedule:`
+    # block in config/sources.yaml (and the Schedule dataclass in config.py).
     "StartCalendarInterval": [
         {"Hour": hour, "Minute": 15} for hour in range(4, 19)  # 4 AM to 6 PM (18:15)
     ],
@@ -70,7 +74,7 @@ install() {
   
   if [ -f "$PLIST_PATH" ]; then
     echo "Plist already exists at $PLIST_PATH"
-    echo "Run with --uninstall first, or use 'launchctl load' to reload."
+    echo "Run with --uninstall first, then re-run this script to reinstall."
     exit 1
   fi
   
@@ -81,9 +85,9 @@ install() {
   render_plist > "$PLIST_PATH"
   echo "Installed $PLIST_PATH"
   
-  # Load the job
-  launchctl load "$PLIST_PATH"
-  echo "Loaded com.example.newnews with launchctl"
+  # Load the job (bootstrap replaces the deprecated 'launchctl load')
+  launchctl bootstrap "gui/$(id -u)" "$PLIST_PATH"
+  echo "Bootstrapped com.example.newnews with launchctl"
 }
 
 # Uninstall the plist
@@ -94,10 +98,9 @@ uninstall() {
     exit 0
   fi
   
-  # Unload the job if loaded
-  if launchctl list | grep -q "com.example.newnews"; then
-    launchctl unload "$PLIST_PATH"
-    echo "Unloaded com.example.newnews with launchctl"
+  # Unload the job if loaded (bootout replaces the deprecated 'launchctl unload')
+  if launchctl bootout "gui/$(id -u)/com.example.newnews" 2>/dev/null; then
+    echo "Booted out com.example.newnews with launchctl"
   fi
   
   rm "$PLIST_PATH"

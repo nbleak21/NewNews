@@ -144,8 +144,9 @@ class TestTimezoneHandling:
     """Tests for timezone verification in the install script."""
 
     def test_script_checks_timezone(self) -> None:
-        """The install script should check for America/Chicago timezone."""
-        script = REPO_ROOT / "scripts" / "install-launchd.sh"
-        content = script.read_text()
-        # Should contain some timezone check
-        assert "timezone" in content.lower() or "America" in content or "Chicago" in content
+        """The script reads the real IANA zone and compares it to America/Chicago."""
+        content = (REPO_ROOT / "scripts" / "install-launchd.sh").read_text()
+        # Reads the actual zone from the system (not the Windows-only `tzutil`).
+        assert "/etc/localtime" in content
+        assert "tzutil get" not in content  # the Windows command, not the word
+        assert "America/Chicago" in content
