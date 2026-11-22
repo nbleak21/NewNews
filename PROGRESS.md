@@ -18,7 +18,23 @@ memory. Write what the NEXT session needs to know, not a diary. -->
 
 <!-- entries go below this line -->
 
-## 2026-11-22 — Task 9: Verify real feed URLs and fill in the config
+## 2026-11-22 — Task 10: launchd plist plus an install script
+
+- What changed: Created `scripts/install-launchd.sh` with install/uninstall
+  modes and `--dry-run` flag for rendering the plist. The plist has 15 entries
+  for hours 4-18 at minute 15, no Weekday key (runs every day), and checks the
+  system timezone (America/Chicago) with a warning if different. Added
+  `tests/test_launchd.py` (13 tests) covering plist content, install script
+  behavior, dry-run, and timezone handling. The rendered plist passes
+  `plutil -lint` validation.
+
+- Tests: `uv run pytest` → `111 passed`; `uv run ruff check .` and
+  `uv run ruff format --check .` both clean.
+
+- Notes / blockers: The install script uses absolute paths based on its own
+  location, so it works from any directory. launchd runs jobs in system time,
+  so the schedule (hours 4-18 at minute 15) will be interpreted in the
+  system's time zone; a warning is printed if not America/Chicago.
 
 - What changed: Looked up and verified Apple podcast IDs for all 7 sources via
   the iTunes Lookup API, then created `config/sources.yaml` with real verified

@@ -119,7 +119,7 @@ each one file + one test file. Do them in order. -->
   *Done when:* no `TODO_VERIFY` remains in `config/sources.yaml`, PROGRESS.md
   lists each URL with the lookup id used, and `--dry-run` produces a lineup.
 
-- [ ] **10. launchd plist plus an install script**
+- [x] **10. launchd plist plus an install script**
   Hourly runs, 7 days a week, 04:15 through 18:15 Central time. Plist template
   whose `StartCalendarInterval` is an array of 15 entries, one per hour
   (`Hour` 4 to 18, `Minute` 15) with no `Weekday` key so every day matches,
