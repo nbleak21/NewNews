@@ -61,12 +61,51 @@ If a task feels big, split it before starting rather than half-finishing it. -->
   *Done when:* tests parse the generated XML back and assert titles, order,
   enclosure URLs equal to the inputs, and that old items are dropped.
 
-- [ ] **8. Dry-run command line** (`cli.py`)
-  `commute-news build [--config PATH] [--dry-run]` wiring every module
-  together. Dry run prints the lineup and total minutes and writes nothing (no
-  feed, no state changes).
-  *Done when:* a test runs the CLI against fixtures with fetching stubbed,
-  checks the printed lineup, and asserts no file was written in dry-run mode.
+<!-- Task 8 (the dry-run CLI) was one box; it wires every module at once and was
+too big for one session (it half-finished three times). Split into 8a/8b/8c,
+each one file + one test file. Do them in order. -->
+
+- [ ] **8a. CLI argument parser and dispatch** (`cli.py`)
+  Implement `build_parser()` only: an `argparse` parser for
+  `commute-news build [--config PATH] [--dry-run]`. `--config` defaults to
+  `config/sources.yaml`; `--dry-run` is a `store_true` flag. `main(argv=None)`
+  parses args, configures logging, and calls `run_build(config_path, dry_run)`,
+  returning its int exit code. Leave `run_build` and `notify_failure` raising
+  `NotImplementedError` for now (8b/8c and task 12 fill them in).
+  *Done when:* tests build the parser and assert the defaults (`config` is
+  `config/sources.yaml`, `dry_run` is False) and that `--dry-run` and
+  `--config X` parse correctly. Do NOT call `main` / `run_build` end to end yet.
+
+- [ ] **8b. Wire fetch → parse → select into `run_build`** (`cli.py`)
+  Implement the selection half of `run_build`: `load_config(config_path)`;
+  `build_client()` (accept an injectable `client` keyword so a test can pass a
+  client built on `httpx.MockTransport`); `fetch_all(client, config.sources,
+  user_agent=config.user_agent)`; for each OK result
+  `parse_feed(source.id, result.body, config.assumed_bitrate_kbps)`; restrict to
+  the current slot via `slot_for_time(config, now)` (accept an injectable
+  `now`); then `select_lineup(episodes, sources, used_guids, now, config)`.
+  Return the `Lineup` (or stash it) so 8c can print or write it. `used_guids`
+  is injectable too — an empty set is fine for this test.
+  *Done when:* a test builds a client from an `httpx.MockTransport` that serves
+  the fixtures in `tests/fixtures/feeds/` for the `example.com` URLs in
+  `tests/fixtures/config_full.yaml`, calls the wiring with a fixed `now`, and
+  asserts the resulting `Lineup` (episode count, order, and `total_minutes`).
+  No network.
+
+- [ ] **8c. Dry-run output and the write path** (`cli.py`)
+  Finish `run_build`. When `dry_run` is True: print the lineup (one line per
+  episode — its prefixed `format_title` and its minutes) and the total minutes
+  to stdout, and write nothing — no `feed.xml`, and do not create or modify the
+  state DB (if you need `used_guids`, read an existing DB but never create one).
+  When False: build `FeedItem`s (`format_title` + `ordered_pubdates`),
+  `render_feed`, `write_feed` to `build/<token>/feed.xml` (token from the
+  `FEED_TOKEN` env / `.env`, never from config), then record state
+  (`mark_used`, `save_validators`, `prune` at `now - config.retain_hour`
+  hours). `main(["build", "--dry-run"])` now works end to end and returns 0.
+  *Done when:* a test runs `main(["build", "--config", <fixture>, "--dry-run"])`
+  with fetching stubbed, captures stdout and asserts the printed lineup and
+  total minutes, and asserts no file was written and the state DB was not
+  created or modified. No network.
 
 - [ ] **9. Verify real feed URLs and fill in the config**
   For each source, find the Apple podcast id, call the lookup API, and record
