@@ -18,6 +18,27 @@ memory. Write what the NEXT session needs to know, not a diary. -->
 
 <!-- entries go below this line -->
 
+## 2026-11-22 — Task 8c: Dry-run output and the write path (`cli.py`)
+
+- What changed: Implemented `run_build()` in `src/commute_news/cli.py`:
+  `dry_run=True` prints the lineup (one line per episode with prefixed title
+  and minutes) and total minutes to stdout; `dry_run=False` builds `FeedItem`s,
+  renders the feed with `render_feed()`, writes to `build/<token>/feed.xml`,
+  and records state (`mark_used`, `save_validators`, `prune`). Added helper
+  functions `_print_lineup()`, `_write_feed_and_state()`, and
+  `_get_feed_token()`; updated `main()` to return exit code 0 on success or 1
+  on exception. Added `tests/test_cli_8c.py` (6 tests) covering dry-run output,
+  write path feed creation, state recording, and second-run episode deduplication.
+
+- Tests: `uv run pytest` → `98 passed`; `uv run ruff check .` and
+  `uv run ruff format --check .` both clean.
+
+- Notes / blockers: The feed token must be set in `NEWNEWS_FEED_TOKEN`
+  environment variable. Some fixture feeds share episode guids across sources
+  (e.g., `keep-001`, `sample-001`), so only unique guids are recorded in state.
+  The state database stores episodes by guid as the primary key, so re-marking
+  an existing guid updates its row.
+
 ## 2026-11-21 — Task 1: Project skeleton and `uv` setup
 - What changed: Replaced the placeholder test with `tests/test_skeleton.py`
   (3 tests: package version, CLI entry point importable, config API names

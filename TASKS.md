@@ -92,7 +92,7 @@ each one file + one test file. Do them in order. -->
   asserts the resulting `Lineup` (episode count, order, and `total_minutes`).
   No network.
 
-- [ ] **8c. Dry-run output and the write path** (`cli.py`)
+- [x] **8c. Dry-run output and the write path** (`cli.py`)
   Finish `run_build`. When `dry_run` is True: print the lineup (one line per
   episode — its prefixed `format_title` and its minutes) and the total minutes
   to stdout, and write nothing — no `feed.xml`, and do not create or modify the
@@ -106,6 +106,10 @@ each one file + one test file. Do them in order. -->
   with fetching stubbed, captures stdout and asserts the printed lineup and
   total minutes, and asserts no file was written and the state DB was not
   created or modified. No network.
+  *Done when:* tests on `tmp_path` prove the dry-run prints the lineup and total
+  minutes to stdout, no files are written, and no state DB is created; the
+  write path creates `build/<token>/feed.xml`, records episodes in state,
+  and the second run does not repeat already-used episodes. No network.
 
 - [ ] **9. Verify real feed URLs and fill in the config**
   For each source, find the Apple podcast id, call the lookup API, and record
