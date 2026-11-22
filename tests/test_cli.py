@@ -106,3 +106,59 @@ def test_wiring_selects_the_expected_lineup() -> None:
     assert len(lineup.episodes) == 5
     assert lineup.total_seconds == 1512
     assert lineup.total_minutes == pytest.approx(25.2)
+
+
+# --- timezone: slots are LOCAL wall-clock, not UTC -------------------------
+
+
+def _one_episode_feed(published: str, guid: str) -> bytes:
+    return (
+        "<?xml version='1.0'?><rss version='2.0' "
+        "xmlns:itunes='http://www.itunes.com/dtds/podcast-1.0.dtd'><channel>"
+        "<title>T</title>"
+        f"<item><guid>{guid}</guid><title>Ep</title>"
+        f"<pubDate>{published}</pubDate>"
+        "<itunes:duration>600</itunes:duration>"
+        "<enclosure url='https://example.com/a.mp3' type='audio/mpeg' length='1000'/>"
+        "</item></channel></rss>"
+    ).encode()
+
+
+def test_slot_selection_uses_config_timezone(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """run_build must convert ``now`` to the config timezone before slot matching.
+
+    NOW is 15:00 UTC = 09:00 in America/Chicago (CST), inside the single
+    04:00-11:59 slot. As a raw UTC wall-clock, 15:00 is OUTSIDE it — so the old
+    code produced an empty lineup. The fix converts to local first and selects
+    the episode.
+    """
+    monkeypatch.chdir(tmp_path)
+    cfg = tmp_path / "cfg.yaml"
+    cfg.write_text(
+        "timezone: 'America/Chicago'\n"
+        "freshness_hours: 6\n"
+        "retain_hours: 6\n"
+        "slots:\n"
+        "  am:\n"
+        "    label: AM\n"
+        "    start: '04:00'\n"
+        "    end: '11:59'\n"
+        "    sources: all\n"
+        "sources:\n"
+        "  - id: s1\n"
+        "    name: Source One\n"
+        "    lean: center\n"
+        "    priority: 1\n"
+        "    feed_url: 'https://example.com/s1.xml'\n"
+    )
+    body = _one_episode_feed("Thu, 19 Nov 2026 14:00:00 GMT", "ep-1")
+    client = httpx.Client(
+        transport=httpx.MockTransport(lambda _req: httpx.Response(200, content=body))
+    )
+    now = datetime(2026, 11, 19, 15, 0, tzinfo=UTC)  # 09:00 America/Chicago
+
+    lineup = run_build(config_path=str(cfg), dry_run=True, client=client, now=now, used_guids=set())
+    # Empty on the old UTC-based code (15:00 > 11:59); selected after the fix.
+    assert [e.guid for e in lineup.episodes] == ["ep-1"]

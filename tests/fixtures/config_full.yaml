@@ -15,14 +15,16 @@ assumed_bitrate_kbps: 128
 # ---- Output feed ----
 feed_title: "NewNews Commute"
 public_base_url: "https://machine.example.ts.net"
-retain_hour: 3
+retain_hours: 3
 
 # ---- Alerts (off) ----
 ntfy_topic: ""
 
 # ---- Polite fetching ----
 user_agent: "NewNews/0.1 (personal podcast aggregator)"
-timezone: "America/Chicago"
+# UTC so the cli/e2e tests' fixed UTC `now` is also the local wall-clock used
+# for slot selection (a dedicated test covers the real timezone conversion).
+timezone: "UTC"
 
 # ---- Schedule ----
 schedule:

@@ -65,7 +65,7 @@ class Config:
     assumed_bitrate_kbps: int = 128
     feed_title: str = "NewNews Commute"
     public_base_url: str = ""
-    retain_hour: int = 3
+    retain_hours: int = 3
     ntfy_topic: str = ""
     user_agent: str = DEFAULT_USER_AGENT
     timezone: str = "America/Chicago"
@@ -99,16 +99,46 @@ def load_config(path: Path) -> Config:
     return validate_config(raw)
 
 
+#: Every recognised top-level config key. Anything else is treated as a typo and
+#: rejected -- this is what catches e.g. ``retain_hour`` for ``retain_hours``.
+_KNOWN_KEYS = frozenset(
+    {
+        "target_minutes",
+        "min_minutes",
+        "max_minutes",
+        "freshness_hours",
+        "max_per_source",
+        "assumed_bitrate_kbps",
+        "feed_title",
+        "public_base_url",
+        "retain_hours",
+        "ntfy_topic",
+        "user_agent",
+        "timezone",
+        "schedule",
+        "slots",
+        "sources",
+    }
+)
+
+
 def validate_config(raw: dict) -> Config:
     """Validate a parsed YAML mapping and build a :class:`Config`.
 
     Must reject: unknown lean tags, duplicate source ids, ``TODO_VERIFY`` feed
-    URLs, min/target/max minutes out of order, ``retain_hour`` below
-    ``freshness_hours``, a non-positive ``assumed_bitrate_kbps``, and slots
-    that name unknown sources.
+    URLs, min/target/max minutes out of order, ``retain_hours`` below
+    ``freshness_hours``, a non-positive ``assumed_bitrate_kbps``, slots that
+    name unknown sources, and any unrecognised top-level key.
     """
     if not isinstance(raw, dict):
         raise ConfigError("config must be a mapping")
+
+    unknown = set(raw) - _KNOWN_KEYS
+    if unknown:
+        raise ConfigError(
+            f"unknown config key(s): {', '.join(sorted(unknown))}. "
+            "Check spelling (e.g. retain_hours, not retain_hour)."
+        )
 
     min_minutes = _as_int(raw, "min_minutes", 20)
     target_minutes = _as_int(raw, "target_minutes", 25)
@@ -121,10 +151,10 @@ def validate_config(raw: dict) -> Config:
         )
 
     freshness_hours = _as_int(raw, "freshness_hours", 2)
-    retain_hour = _as_int(raw, "retain_hour", 3)
-    if retain_hour < freshness_hours:
+    retain_hours = _as_int(raw, "retain_hours", 3)
+    if retain_hours < freshness_hours:
         raise ConfigError(
-            f"retain_hour ({retain_hour}) must be >= freshness_hours ({freshness_hours})"
+            f"retain_hours ({retain_hours}) must be >= freshness_hours ({freshness_hours})"
         )
 
     bitrate = _as_int(raw, "assumed_bitrate_kbps", 128)
@@ -144,7 +174,7 @@ def validate_config(raw: dict) -> Config:
         assumed_bitrate_kbps=bitrate,
         feed_title=_as_str(raw, "feed_title", "NewNews Commute"),
         public_base_url=_as_str(raw, "public_base_url", ""),
-        retain_hour=retain_hour,
+        retain_hours=retain_hours,
         ntfy_topic=_as_str(raw, "ntfy_topic", ""),
         user_agent=_as_str(raw, "user_agent", DEFAULT_USER_AGENT),
         timezone=_as_str(raw, "timezone", "America/Chicago"),

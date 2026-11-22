@@ -46,10 +46,10 @@ def test_full_fixture_loads() -> None:
     cfg = load_config(FULL)
     assert (cfg.min_minutes, cfg.target_minutes, cfg.max_minutes) == (20, 25, 30)
     assert cfg.freshness_hours == 2
-    assert cfg.retain_hour == 3
+    assert cfg.retain_hours == 3
     assert cfg.assumed_bitrate_kbps == 128
     assert cfg.max_per_source == 1
-    assert cfg.timezone == "America/Chicago"
+    assert cfg.timezone == "UTC"
     assert cfg.feed_title == "NewNews Commute"
     assert cfg.public_base_url == "https://machine.example.ts.net"
     assert cfg.schedule.days == "all"
@@ -78,7 +78,7 @@ def test_empty_file_gives_defaults() -> None:
     assert cfg == Config()
     assert (cfg.min_minutes, cfg.target_minutes, cfg.max_minutes) == (20, 25, 30)
     assert cfg.freshness_hours == 2
-    assert cfg.retain_hour == 3
+    assert cfg.retain_hours == 3
     assert cfg.assumed_bitrate_kbps == 128
     assert cfg.ntfy_topic == ""
     assert cfg.sources == ()
@@ -127,9 +127,31 @@ def test_rejects_target_above_max() -> None:
 
 def test_rejects_retain_hours_below_freshness_hours() -> None:
     raw = full_raw()
-    raw["freshness_hours"] = 4  # > retain_hour 3
+    raw["freshness_hours"] = 4  # > retain_hours 3
     with pytest.raises(ConfigError, match="freshness_hour"):
         validate_config(raw)
+
+
+def test_retain_hours_value_is_honored() -> None:
+    # Regression: the loader used to read the singular key "retain_hour", so a
+    # config that set the documented plural "retain_hours" was silently ignored
+    # and retention stayed at the default 3. The configured value must be used.
+    raw = full_raw()
+    raw["retain_hours"] = 6
+    assert validate_config(raw).retain_hours == 6
+
+
+def test_rejects_unknown_or_misspelled_key() -> None:
+    # The singular "retain_hour" is the exact typo that used to pass silently;
+    # unknown top-level keys are now rejected so it (and future typos) cannot.
+    raw = full_raw()
+    raw["retain_hour"] = 9
+    with pytest.raises(ConfigError, match="unknown config key"):
+        validate_config(raw)
+    raw2 = full_raw()
+    raw2["totally_bogus"] = 1
+    with pytest.raises(ConfigError, match="unknown config key"):
+        validate_config(raw2)
 
 
 @pytest.mark.parametrize("bad", [0, -1, -128])

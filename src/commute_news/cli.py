@@ -14,9 +14,10 @@ import logging
 import os
 import sqlite3
 from collections.abc import Collection
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime, timedelta, tzinfo
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
 
 import httpx
 
@@ -130,16 +131,23 @@ def run_build(
     if used_guids is None:
         used_guids = read_used_guids(conn) if conn is not None else set()
 
-    allowed = _slot_sources(config, now)
+    # Slots and title dates are in the configured local timezone, not UTC.
+    zone = _zone(config)
+    local_now = now.astimezone(zone)
+    allowed = _slot_sources(config, local_now)
     allowed_ids = {source.id for source in allowed}
+    slot = slot_for_time(config, local_now)
+    slot_label = slot.label if slot else ""
 
-    # Conditional GET: send each source's stored ETag / Last-Modified.
+    # Conditional GET: send each allowed source's stored ETag / Last-Modified.
+    # Only the slot's sources are fetched, so a slot-excluded source is not hit
+    # on its publisher this run (its earlier items stay in the retained feed).
     validators = (
-        {source.id: get_validators(conn, source.id) for source in config.sources}
+        {source.id: get_validators(conn, source.id) for source in allowed}
         if conn is not None
         else None
     )
-    results = fetch_all(client, config.sources, validators=validators, user_agent=config.user_agent)
+    results = fetch_all(client, allowed, validators=validators, user_agent=config.user_agent)
 
     episodes: list[Episode] = []
     for source in config.sources:
@@ -175,15 +183,26 @@ def run_build(
 
     if dry_run:
         # Print the lineup to stdout (the one deliberate use of print)
-        _print_lineup(lineup, config)
+        _print_lineup(lineup, config, slot_label, zone)
     else:
         # Record state and write the retained (~retain_hours) feed.
-        _write_feed_and_state(lineup, config, now, state_conn=conn, fetch_results=results)
+        _write_feed_and_state(
+            lineup, config, now, slot_label, zone, state_conn=conn, fetch_results=results
+        )
 
     if own_conn and conn is not None:
         conn.close()
 
     return lineup
+
+
+def _zone(config: Config) -> tzinfo:
+    """The configured timezone, or UTC if it is unknown / tzdata is missing."""
+    try:
+        return ZoneInfo(config.timezone)
+    except Exception:  # noqa: BLE001 - unknown zone name or missing tz database
+        logger.warning("unknown timezone %r; falling back to UTC", config.timezone)
+        return UTC
 
 
 def _slot_sources(config: Config, now: datetime) -> list[Source]:
@@ -215,7 +234,7 @@ def _get_feed_token() -> str:
     return token
 
 
-def _print_lineup(lineup: Lineup, config: Config) -> None:
+def _print_lineup(lineup: Lineup, config: Config, slot_label: str, zone: tzinfo) -> None:
     """Print the lineup to stdout (the one deliberate use of print).
 
     One line per episode with the formatted title and minutes, then
@@ -226,10 +245,10 @@ def _print_lineup(lineup: Lineup, config: Config) -> None:
         source = next((s for s in config.sources if s.id == episode.source_id), None)
         source_name = source.name if source else episode.source_id
 
-        # Format the title
+        # Format the title (slot label + date in the configured local timezone)
         formatted = format_title(
-            slot_label=config.slots[0].label if config.slots else "",
-            when=episode.published,
+            slot_label=slot_label,
+            when=episode.published.astimezone(zone),
             position=i,
             total=len(lineup.episodes),
             source_name=source_name,
@@ -245,6 +264,8 @@ def _write_feed_and_state(
     lineup: Lineup,
     config: Config,
     now: datetime,
+    slot_label: str,
+    zone: tzinfo,
     state_conn: sqlite3.Connection | None = None,
     fetch_results: dict[str, Any] | None = None,
 ) -> None:
@@ -263,22 +284,20 @@ def _write_feed_and_state(
         state_conn = connect(Path(DEFAULT_STATE_PATH))
         own = True
 
-    slot_label = config.slots[0].label if config.slots else ""
-
     # 1. Record this run, save validators, prune — so the window read back below
     #    is current.
     mark_used(state_conn, lineup.episodes, slot_label, now)
     if fetch_results:
         for source in config.sources:
             result = fetch_results.get(source.id)
-            if result is not None:
+            if result is not None and result.error is None:
                 save_validators(
                     state_conn,
                     source.id,
                     etag=result.etag,
                     last_modified=result.last_modified,
                 )
-    cutoff = now - timedelta(hours=config.retain_hour)
+    cutoff = now - timedelta(hours=config.retain_hours)
     removed = prune(state_conn, cutoff)
     if removed:
         logger.info("pruned %d old episode(s)", removed)
@@ -317,7 +336,7 @@ def _write_feed_and_state(
         FeedItem(
             title=format_title(
                 slot_label=item["slot_label"],
-                when=item["published"],
+                when=item["published"].astimezone(zone),
                 position=i + 1,
                 total=len(items),
                 source_name=source_names.get(item["source_id"], item["source_id"]),
@@ -340,7 +359,7 @@ def _write_feed_and_state(
         feed_title=config.feed_title,
         feed_url=feed_url,
         now=now,
-        retain_hours=config.retain_hour,
+        retain_hours=config.retain_hours,
     )
     feed_path = Path("build") / feed_token / "feed.xml"
     write_feed(feed_xml, feed_path)
