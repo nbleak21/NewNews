@@ -61,7 +61,7 @@ PROMPT="You are completing exactly ONE task in this git repository. Do the steps
 4. Write or update the tests for this task FIRST, under tests/. Use fixtures in tests/fixtures/; never touch the network in tests.
 5. Implement the minimal code to make those tests pass. Keep all changes scoped to this one task. Follow AGENTS.md style: type hints, small pure functions, logging not print, every config value has a default.
 6. Run the full suite with your shell tool: uv run pytest
-7. ONLY if every test passes: change that task's '- [ ]' to '- [x]' in TASKS.md, and append a dated entry to PROGRESS.md using the template at the top of that file.
+7. ONLY if every test passes: change that task's '- [ ]' to '- [x]' in TASKS.md, and APPEND a dated entry at the very END of PROGRESS.md — after the last existing entry, newest last. Do NOT insert it near the top or above older entries. Use the template at the top of that file.
 8. If you are blocked or cannot finish, do NOT guess: append the blocker to PROGRESS.md and stop.
 Do not modify any other unchecked task. Never run 'git push' or 'git commit' (the loop handles commits). Never run 'rm -rf' outside build/ or state/, and never write outside this repository."
 

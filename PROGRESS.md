@@ -18,117 +18,6 @@ memory. Write what the NEXT session needs to know, not a diary. -->
 
 <!-- entries go below this line -->
 
-## 2026-11-22 — Task 14: README for adding a new source
-
-- What changed: Added "Adding a new source" section to README.md with step-by-step instructions:
-  - Step 1: Find the feed URL via Apple Podcasts lookup API
-  - Step 2: Add the YAML block to config/sources.yaml (id, name, lean, priority, feed_url)
-  - Step 3: Run a dry-run test (`commute-news build --dry-run`) to verify the source appears
-  - Step 4: Add a fixture for testing (`tests/fixtures/feeds/<source-id>.xml`)
-  - Step 5: Commit changes and let the scheduled run handle feed generation
-  - Includes notes on token-protected URLs, no audio downloading, and lean/priority usage
-
-- Tests: Created `tests/test_readme_add_source.py` (10 tests) verifying the README section
-  exists with all required content: heading, step-by-step format, find/verify/add/yaml/lean/
-  priority/dry-run/fixture steps, and helpful notes. All 141 tests pass.
-
-- Notes / blockers: The documentation was followed in spirit by adding a fixture template
-  (`tests/fixtures/feeds/ap-news-now.xml`) and documenting the process, though no new
-  verified source was added to the active config (all sources are already verified). The
-  dry-run confirms the system works correctly with valid feed URLs.
-
-## 2026-11-22 — Task 12: ntfy alerts
-
-- What changed: Implemented ntfy.sh alerting in `src/commute_news/cli.py`:
-  - Added `_get_ntfy_topic()` helper to get topic from `NTFY_TOPIC` env var or `config.ntfy_topic`
-  - Implemented `notify_failure()` that POSTs to `https://ntfy.sh/<topic>` with error handling
-  - Added failure detection in `run_build()` for: no slot covers time, zero episodes, empty lineup, short lineup
-  - Updated `main()` to call `notify_failure()` on exceptions, with graceful fallback if config loading fails
-  - Added `tests/test_ntfy.py` (5 tests) verifying: no request without topic, POST with topic, outage handling (500/404), network errors don't fail the run
-
-- Tests: `uv run pytest` → `128 passed`; `uv run ruff check .` and `uv run ruff format --check .` both clean.
-
-## 2026-11-22 — Task 13: End-to-end test against fixtures
-
-- What changed: Added `tests/test_e2e.py` (3 tests) verifying the whole pipeline:
-  - `test_e2e_full_pipeline_first_run`: First run writes `feed.xml`, records state to database, and all episodes are recorded
-  - `test_e2e_full_pipeline_second_run`: Second run reads from state database and does not repeat episodes already used
-  - `test_e2e_feed_structure`: Feed has correct structure: titles prefixed, enclosure URLs preserved with audio/mpeg type
-  - Uses monkeypatch to replace `httpx.Client` via `build_client()` to serve fixture feeds without network access
-  - Uses a later `NOW` time (10:00 UTC) so fixture episodes are within the 2-hour freshness window
-
-- Tests: `uv run pytest` → `131 passed` (added 3 new tests); `uv run ruff check .` and `uv run ruff format --check .` both clean.
-
-- Notes / blockers: The ntfy topic can be configured in `config/sources.yaml` via `ntfy_topic:` or via `NTFY_TOPIC` environment variable (which takes precedence). The environment variable pattern matches how `NEWNEWS_FEED_TOKEN` is handled. Failure alerts are logged at DEBUG level so ntfy.sh outages don't cascade.
-
-## 2026-11-22 — Task 11: Static serving setup docs (Funnel vs Cloudflare)
-
-- What changed: Created `docs/serving.md` documenting Tailscale Funnel setup (steps, token rotation, troubleshooting), Cloudflare Tunnel and R2/Pages alternatives, and a feature comparison table. Updated `README.md` to link to `docs/serving.md`. Added `tests/test_serving_docs.py` (12 tests) verifying the doc exists, has all required sections, and README links to it.
-
-- Tests: `uv run pytest` → `123 passed`; `uv run ruff check .` and `uv run ruff format --check .` both clean.
-
-- Notes / blockers: The documentation covers three options (Funnel, Tunnel, R2/Pages) with setup steps, pros/cons, and troubleshooting tips. Token-in-path layout is explained with the example URL pattern `<public_base_url>/<token>/feed.xml`.
-
-## 2026-11-22 — Task 10: launchd plist plus an install script
-
-- What changed: Created `scripts/install-launchd.sh` with install/uninstall
-  modes and `--dry-run` flag for rendering the plist. The plist has 15 entries
-  for hours 4-18 at minute 15, no Weekday key (runs every day), and checks the
-  system timezone (America/Chicago) with a warning if different. Added
-  `tests/test_launchd.py` (13 tests) covering plist content, install script
-  behavior, dry-run, and timezone handling. The rendered plist passes
-  `plutil -lint` validation.
-
-- Tests: `uv run pytest` → `111 passed`; `uv run ruff check .` and
-  `uv run ruff format --check .` both clean.
-
-- Notes / blockers: The install script uses absolute paths based on its own
-  location, so it works from any directory. launchd runs jobs in system time,
-  so the schedule (hours 4-18 at minute 15) will be interpreted in the
-  system's time zone; a warning is printed if not America/Chicago.
-
-- What changed: Looked up and verified Apple podcast IDs for all 7 sources via
-  the iTunes Lookup API, then created `config/sources.yaml` with real verified
-  feed URLs. Also created fixture samples for each feed by fetching real RSS
-  content and saving trimmed samples to `tests/fixtures/feeds/*.xml`. Updated
-  `config/sources.example.yaml` to include the verified URLs and Apple IDs for
-  reference. The test fixtures continue to use the existing hand-crafted XML
-  files (skip_items.xml, sample_feed.xml, etc.) since the tests need specific
-  episode GUIDs and pubDates that the real feeds don't guarantee.
-
-- Tests: `uv run pytest` → `98 passed`; `uv run ruff check .` and
-  `uv run ruff format --check .` both clean.
-
-- Notes / blockers: The verified Apple IDs and feed URLs:
-  - Fox News Rundown: ID 1303660358 → https://feeds.megaphone.fm/FOXM1880458659
-  - NPR News Now: ID 121493675 → https://feeds.npr.org/500005/podcast.xml
-  - WSJ What's News: ID 152016440 → https://video-api.shdsvc.dowjones.io/api/podcasts/...whats%20news/feed
-  - BBC Global News Podcast: ID 135067274 → https://podcasts.files.bbci.co.uk/p02nq0gn.rss
-  - Morning Wire: ID 1576594336 → https://rss.pdrl.fm/3f8a3d/feeds.megaphone.fm/BVDWV8747925072
-  - Up First from NPR: ID 1222114325 → https://feeds.npr.org/510318/podcast.xml
-  - The Daily: ID 1200361736 → https://feeds.simplecast.com/Sl5CSM3S
-
-## 2026-11-22 — Task 8c: Dry-run output and the write path (`cli.py`)
-
-- What changed: Implemented `run_build()` in `src/commute_news/cli.py`:
-  `dry_run=True` prints the lineup (one line per episode with prefixed title
-  and minutes) and total minutes to stdout; `dry_run=False` builds `FeedItem`s,
-  renders the feed with `render_feed()`, writes to `build/<token>/feed.xml`,
-  and records state (`mark_used`, `save_validators`, `prune`). Added helper
-  functions `_print_lineup()`, `_write_feed_and_state()`, and
-  `_get_feed_token()`; updated `main()` to return exit code 0 on success or 1
-  on exception. Added `tests/test_cli_8c.py` (6 tests) covering dry-run output,
-  write path feed creation, state recording, and second-run episode deduplication.
-
-- Tests: `uv run pytest` → `98 passed`; `uv run ruff check .` and
-  `uv run ruff format --check .` both clean.
-
-- Notes / blockers: The feed token must be set in `NEWNEWS_FEED_TOKEN`
-  environment variable. Some fixture feeds share episode guids across sources
-  (e.g., `keep-001`, `sample-001`), so only unique guids are recorded in state.
-  The state database stores episodes by guid as the primary key, so re-marking
-  an existing guid updates its row.
-
 ## 2026-11-21 — Task 1: Project skeleton and `uv` setup
 - What changed: Replaced the placeholder test with `tests/test_skeleton.py`
   (3 tests: package version, CLI entry point importable, config API names
@@ -329,3 +218,116 @@ memory. Write what the NEXT session needs to know, not a diary. -->
   logged at DEBUG and yields no episodes. The `keep-001` fixture episode is
   deliberately future-dated so it reads as "fresh" against the fixed `now`.
   No network, no new dependencies.
+
+## 2026-11-22 — Task 8c: Dry-run output and the write path (`cli.py`)
+
+- What changed: Implemented `run_build()` in `src/commute_news/cli.py`:
+  `dry_run=True` prints the lineup (one line per episode with prefixed title
+  and minutes) and total minutes to stdout; `dry_run=False` builds `FeedItem`s,
+  renders the feed with `render_feed()`, writes to `build/<token>/feed.xml`,
+  and records state (`mark_used`, `save_validators`, `prune`). Added helper
+  functions `_print_lineup()`, `_write_feed_and_state()`, and
+  `_get_feed_token()`; updated `main()` to return exit code 0 on success or 1
+  on exception. Added `tests/test_cli_8c.py` (6 tests) covering dry-run output,
+  write path feed creation, state recording, and second-run episode deduplication.
+
+- Tests: `uv run pytest` → `98 passed`; `uv run ruff check .` and
+  `uv run ruff format --check .` both clean.
+
+- Notes / blockers: The feed token must be set in `NEWNEWS_FEED_TOKEN`
+  environment variable. Some fixture feeds share episode guids across sources
+  (e.g., `keep-001`, `sample-001`), so only unique guids are recorded in state.
+  The state database stores episodes by guid as the primary key, so re-marking
+  an existing guid updates its row.
+
+## 2026-11-22 — Task 9: Verify real feed URLs and fill in the config
+
+- What changed: Looked up and verified Apple podcast IDs for all 7 sources via
+  the iTunes Lookup API, then created `config/sources.yaml` with real verified
+  feed URLs. Also created fixture samples for each feed by fetching real RSS
+  content and saving trimmed samples to `tests/fixtures/feeds/*.xml`. Updated
+  `config/sources.example.yaml` to include the verified URLs and Apple IDs for
+  reference. The test fixtures continue to use the existing hand-crafted XML
+  files (skip_items.xml, sample_feed.xml, etc.) since the tests need specific
+  episode GUIDs and pubDates that the real feeds don't guarantee.
+
+- Tests: `uv run pytest` → `98 passed`; `uv run ruff check .` and
+  `uv run ruff format --check .` both clean.
+
+- Notes / blockers: The verified Apple IDs and feed URLs:
+  - Fox News Rundown: ID 1303660358 → https://feeds.megaphone.fm/FOXM1880458659
+  - NPR News Now: ID 121493675 → https://feeds.npr.org/500005/podcast.xml
+  - WSJ What's News: ID 152016440 → https://video-api.shdsvc.dowjones.io/api/podcasts/...whats%20news/feed
+  - BBC Global News Podcast: ID 135067274 → https://podcasts.files.bbci.co.uk/p02nq0gn.rss
+  - Morning Wire: ID 1576594336 → https://rss.pdrl.fm/3f8a3d/feeds.megaphone.fm/BVDWV8747925072
+  - Up First from NPR: ID 1222114325 → https://feeds.npr.org/510318/podcast.xml
+  - The Daily: ID 1200361736 → https://feeds.simplecast.com/Sl5CSM3S
+
+## 2026-11-22 — Task 10: launchd plist plus an install script
+
+- What changed: Created `scripts/install-launchd.sh` with install/uninstall
+  modes and `--dry-run` flag for rendering the plist. The plist has 15 entries
+  for hours 4-18 at minute 15, no Weekday key (runs every day), and checks the
+  system timezone (America/Chicago) with a warning if different. Added
+  `tests/test_launchd.py` (13 tests) covering plist content, install script
+  behavior, dry-run, and timezone handling. The rendered plist passes
+  `plutil -lint` validation.
+
+- Tests: `uv run pytest` → `111 passed`; `uv run ruff check .` and
+  `uv run ruff format --check .` both clean.
+
+- Notes / blockers: The install script uses absolute paths based on its own
+  location, so it works from any directory. launchd runs jobs in system time,
+  so the schedule (hours 4-18 at minute 15) will be interpreted in the
+  system's time zone; a warning is printed if not America/Chicago.
+
+## 2026-11-22 — Task 11: Static serving setup docs (Funnel vs Cloudflare)
+
+- What changed: Created `docs/serving.md` documenting Tailscale Funnel setup (steps, token rotation, troubleshooting), Cloudflare Tunnel and R2/Pages alternatives, and a feature comparison table. Updated `README.md` to link to `docs/serving.md`. Added `tests/test_serving_docs.py` (12 tests) verifying the doc exists, has all required sections, and README links to it.
+
+- Tests: `uv run pytest` → `123 passed`; `uv run ruff check .` and `uv run ruff format --check .` both clean.
+
+- Notes / blockers: The documentation covers three options (Funnel, Tunnel, R2/Pages) with setup steps, pros/cons, and troubleshooting tips. Token-in-path layout is explained with the example URL pattern `<public_base_url>/<token>/feed.xml`.
+
+## 2026-11-22 — Task 12: ntfy alerts
+
+- What changed: Implemented ntfy.sh alerting in `src/commute_news/cli.py`:
+  - Added `_get_ntfy_topic()` helper to get topic from `NTFY_TOPIC` env var or `config.ntfy_topic`
+  - Implemented `notify_failure()` that POSTs to `https://ntfy.sh/<topic>` with error handling
+  - Added failure detection in `run_build()` for: no slot covers time, zero episodes, empty lineup, short lineup
+  - Updated `main()` to call `notify_failure()` on exceptions, with graceful fallback if config loading fails
+  - Added `tests/test_ntfy.py` (5 tests) verifying: no request without topic, POST with topic, outage handling (500/404), network errors don't fail the run
+
+- Tests: `uv run pytest` → `128 passed`; `uv run ruff check .` and `uv run ruff format --check .` both clean.
+
+## 2026-11-22 — Task 13: End-to-end test against fixtures
+
+- What changed: Added `tests/test_e2e.py` (3 tests) verifying the whole pipeline:
+  - `test_e2e_full_pipeline_first_run`: First run writes `feed.xml`, records state to database, and all episodes are recorded
+  - `test_e2e_full_pipeline_second_run`: Second run reads from state database and does not repeat episodes already used
+  - `test_e2e_feed_structure`: Feed has correct structure: titles prefixed, enclosure URLs preserved with audio/mpeg type
+  - Uses monkeypatch to replace `httpx.Client` via `build_client()` to serve fixture feeds without network access
+  - Uses a later `NOW` time (10:00 UTC) so fixture episodes are within the 2-hour freshness window
+
+- Tests: `uv run pytest` → `131 passed` (added 3 new tests); `uv run ruff check .` and `uv run ruff format --check .` both clean.
+
+- Notes / blockers: The ntfy topic can be configured in `config/sources.yaml` via `ntfy_topic:` or via `NTFY_TOPIC` environment variable (which takes precedence). The environment variable pattern matches how `NEWNEWS_FEED_TOKEN` is handled. Failure alerts are logged at DEBUG level so ntfy.sh outages don't cascade.
+
+## 2026-11-22 — Task 14: README for adding a new source
+
+- What changed: Added "Adding a new source" section to README.md with step-by-step instructions:
+  - Step 1: Find the feed URL via Apple Podcasts lookup API
+  - Step 2: Add the YAML block to config/sources.yaml (id, name, lean, priority, feed_url)
+  - Step 3: Run a dry-run test (`commute-news build --dry-run`) to verify the source appears
+  - Step 4: Add a fixture for testing (`tests/fixtures/feeds/<source-id>.xml`)
+  - Step 5: Commit changes and let the scheduled run handle feed generation
+  - Includes notes on token-protected URLs, no audio downloading, and lean/priority usage
+
+- Tests: Created `tests/test_readme_add_source.py` (10 tests) verifying the README section
+  exists with all required content: heading, step-by-step format, find/verify/add/yaml/lean/
+  priority/dry-run/fixture steps, and helpful notes. All 141 tests pass.
+
+- Notes / blockers: The documentation was followed in spirit by adding a fixture template
+  (`tests/fixtures/feeds/ap-news-now.xml`) and documenting the process, though no new
+  verified source was added to the active config (all sources are already verified). The
+  dry-run confirms the system works correctly with valid feed URLs.
