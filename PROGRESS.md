@@ -190,3 +190,31 @@ memory. Write what the NEXT session needs to know, not a diary. -->
   `build` subcommand, so it must follow `build` on the command line
   (`commute-news build --config X`), and a bare `commute-news` is a usage
   error rather than a silent no-op.
+
+## 2026-11-21 — Task 8b: Wire fetch → parse → select into `run_build` (`cli.py`)
+
+- What changed: implemented `run_build(config_path, dry_run, *, client=None,
+  now=None, used_guids=frozenset())` in `src/commute_news/cli.py`:
+  `load_config` → `fetch_all` (over `config.sources`) → `parse_feed` per
+  fetched body (with `assumed_bitrate_kbps` from config) → restrict episodes
+  to the slot-allowed sources via the new `_slot_sources` helper →
+  `select_lineup` → return the `Lineup`. Added a module-level `logger`
+  (`logging.getLogger("commute_news")`), made `main` return `0` after
+  delegating to `run_build` (the `Lineup` is discarded for now, with a
+  comment: task 8c adds printing, the write path, and the real exit code).
+  `_slot_sources(sources, now)` returns the full list when no slot matches
+  the clock, the full list for a slot with `sources: "all"`, only the named
+  ids for a slot listing sources, or `[]` plus a warning when no slot covers
+  `now`. Added `test_wiring_selects_the_expected_lineup` to
+  `tests/test_cli.py`, serving the four `tests/fixtures/feeds/*.xml` files
+  over `httpx.MockTransport` against `config_full.yaml`'s example.com URLs
+  (no network) with a fixed `now`, asserting the 5-episode lineup, its order,
+  `total_seconds == 1512` and `total_minutes ≈ 25.2`.
+- Tests: `uv run pytest` → `92 passed`; `uv run ruff check .` and
+  `uv run ruff format --check .` both clean.
+- Notes / blockers: `run_build` still does not print, write, or return a
+  non-`Lineup` value — task 8c owns the dry-run output, the `feed.xml`
+  write, and the int exit code. A 304 (or any response with no body) is
+  logged at DEBUG and yields no episodes. The `keep-001` fixture episode is
+  deliberately future-dated so it reads as "fresh" against the fixed `now`.
+  No network, no new dependencies.

@@ -76,7 +76,7 @@ each one file + one test file. Do them in order. -->
   `config/sources.yaml`, `dry_run` is False) and that `--dry-run` and
   `--config X` parse correctly. Do NOT call `main` / `run_build` end to end yet.
 
-- [ ] **8b. Wire fetch → parse → select into `run_build`** (`cli.py`)
+- [x] **8b. Wire fetch → parse → select into `run_build`** (`cli.py`)
   Implement the selection half of `run_build`: `load_config(config_path)`;
   `build_client()` (accept an injectable `client` keyword so a test can pass a
   client built on `httpx.MockTransport`); `fetch_all(client, config.sources,
