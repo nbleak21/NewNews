@@ -18,6 +18,19 @@ memory. Write what the NEXT session needs to know, not a diary. -->
 
 <!-- entries go below this line -->
 
+## 2026-11-22 — Task 12: ntfy alerts
+
+- What changed: Implemented ntfy.sh alerting in `src/commute_news/cli.py`:
+  - Added `_get_ntfy_topic()` helper to get topic from `NTFY_TOPIC` env var or `config.ntfy_topic`
+  - Implemented `notify_failure()` that POSTs to `https://ntfy.sh/<topic>` with error handling
+  - Added failure detection in `run_build()` for: no slot covers time, zero episodes, empty lineup, short lineup
+  - Updated `main()` to call `notify_failure()` on exceptions, with graceful fallback if config loading fails
+  - Added `tests/test_ntfy.py` (5 tests) verifying: no request without topic, POST with topic, outage handling (500/404), network errors don't fail the run
+
+- Tests: `uv run pytest` → `128 passed`; `uv run ruff check .` and `uv run ruff format --check .` both clean.
+
+- Notes / blockers: The ntfy topic can be configured in `config/sources.yaml` via `ntfy_topic:` or via `NTFY_TOPIC` environment variable (which takes precedence). The environment variable pattern matches how `NEWNEWS_FEED_TOKEN` is handled. Failure alerts are logged at DEBUG level so ntfy.sh outages don't cascade.
+
 ## 2026-11-22 — Task 11: Static serving setup docs (Funnel vs Cloudflare)
 
 - What changed: Created `docs/serving.md` documenting Tailscale Funnel setup (steps, token rotation, troubleshooting), Cloudflare Tunnel and R2/Pages alternatives, and a feature comparison table. Updated `README.md` to link to `docs/serving.md`. Added `tests/test_serving_docs.py` (12 tests) verifying the doc exists, has all required sections, and README links to it.

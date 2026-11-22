@@ -121,6 +121,23 @@ def run_build(
 
     lineup = select_lineup(episodes, allowed, used_guids, now, config)
 
+    # Check for failure conditions and alert if topic is configured
+    # (but only in non-dry-run mode since alerts are for real failures)
+    if not dry_run:
+        topic = _get_ntfy_topic(config)
+        if not allowed:
+            notify_failure(topic, "Build skipped: no slot covers the current time")
+        elif not episodes:
+            notify_failure(topic, "Build failed: no episodes fetched from any source")
+        elif not lineup.episodes:
+            notify_failure(topic, "Build failed: lineup is empty after selection")
+        elif lineup.total_minutes < config.min_minutes:
+            notify_failure(
+                topic,
+                f"Build warning: lineup is short ({lineup.total_minutes:.1f} min, "
+                f"target {config.min_minutes} min)",
+            )
+
     if dry_run:
         # Print the lineup to stdout (the one deliberate use of print)
         _print_lineup(lineup, config)
@@ -283,9 +300,43 @@ def _write_feed_and_state(
         logger.info("pruned %d old episode(s)", removed)
 
 
+def _get_ntfy_topic(config: Config | None = None) -> str | None:
+    """Return the ntfy topic from environment variable or config.
+
+    The NTFY_TOPIC environment variable takes precedence over config.ntfy_topic.
+    Returns None if no topic is configured (empty string or not set).
+    """
+    # Environment variable overrides config
+    env_topic = os.environ.get("NTFY_TOPIC")
+    if env_topic:
+        return env_topic
+    if config and config.ntfy_topic:
+        return config.ntfy_topic
+    return None
+
+
 def notify_failure(topic: str | None, message: str) -> None:
-    """Send an ntfy.sh alert if a topic is configured; do nothing otherwise."""
-    raise NotImplementedError
+    """Send an ntfy.sh alert if a topic is configured; do nothing otherwise.
+
+    Errors (network, 5xx, 404) are caught and logged at DEBUG level so the
+    failure alert itself does not fail the run.
+    """
+    if not topic:
+        return
+
+    import logging
+
+    logger = logging.getLogger(__name__)
+
+    url = f"https://ntfy.sh/{topic}"
+    try:
+        with httpx.Client() as client:
+            response = client.post(url, content=message)
+            response.raise_for_status()
+            logger.debug("ntfy alert sent to %s", topic)
+    except Exception as exc:
+        # Log at DEBUG so failures don't cascade; the run continues
+        logger.debug("ntfy alert failed for %s: %s", topic, exc)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -301,7 +352,14 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     except Exception as exc:
         logger.error("build failed: %s", exc)
-        # TODO: send ntfy alert (task 12)
+        # Try to get the config to check for ntfy topic
+        try:
+            config = load_config(args.config)
+            topic = _get_ntfy_topic(config)
+            notify_failure(topic, f"Build failed: {exc}")
+        except Exception:
+            # If we can't load config or notify, just log the original error
+            logger.debug("could not send ntfy alert due to config error", exc_info=True)
         return 1
 
 

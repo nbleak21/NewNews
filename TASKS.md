@@ -138,7 +138,7 @@ each one file + one test file. Do them in order. -->
   *Done when:* the doc has copy-paste steps for Funnel, states the trade-offs,
   and README links to it.
 
-- [ ] **12. ntfy alerts**
+- [x] **12. ntfy alerts**
   On failure (exception, zero sources fetched, short lineup) POST to
   `https://ntfy.sh/<topic>`. No topic configured means no request and no error.
   *Done when:* tests with a mocked transport prove a POST happens with a topic,
