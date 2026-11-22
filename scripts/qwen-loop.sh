@@ -18,13 +18,17 @@
 # SERVER: llama-server must be serving Qwen3-Coder-Next at $LLAMA_BASE_URL.
 #   See the header of scripts/aider-loop.sh for the exact llama-server command.
 #
-# GUARDRAILS: --yolo auto-approves ALL tool calls (shell/write/edit) with NO
-#   sandbox, so the model *could* run anything. Defence in depth here:
+# GUARDRAILS: --yolo auto-approves ALL tool calls, but they run inside Qwen
+#   Code's macOS Seatbelt sandbox (--sandbox sandbox-exec, profile
+#   permissive-open: writes confined to this project + temp, network allowed for
+#   the local model and uv). Verified: `uv run pytest` works confined. Defence
+#   in depth on top of the sandbox:
 #     - the loop refuses a dirty tree and `git reset --hard` on a failed iteration
 #     - a .git/hooks/pre-push hook blocks pushes (see install-guardrails note below)
 #     - the prompt forbids git push/commit, rm -rf, and out-of-repo writes
 #     - run it on a dedicated branch
-#   For true isolation later, see Qwen Code's QWEN_SANDBOX / tools.executionSandbox.
+#   (Note: tools.executionSandbox in settings.json is Linux-only — bwrap/landlock;
+#   macOS uses the sandbox-exec Seatbelt backend wired above.)
 #
 #   install the pre-push guard once:
 #     printf '#!/bin/sh\necho "push blocked by qwen-loop guardrail" >&2; exit 1\n' \
@@ -93,7 +97,7 @@ notify() {
 # -p "<prompt>" --yolo: headless, auto-approve every tool call. The agent reads,
 # edits, and runs the tests itself; the loop below is the real pass/fail gate.
 run_agent() {
-  qwen -p "$PROMPT" --yolo >> "$LOG" 2>&1 &
+  qwen -p "$PROMPT" --yolo --sandbox sandbox-exec >> "$LOG" 2>&1 &
   local pid=$!
   ( sleep $((ITER_TIMEOUT_MIN * 60)); kill "$pid" 2>/dev/null ) &
   local watchdog=$!
