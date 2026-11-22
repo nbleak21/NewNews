@@ -64,6 +64,9 @@ MAX_ITERATIONS="${1:-${MAX_ITERATIONS:-15}}"
 ITER_TIMEOUT_MIN="${ITER_TIMEOUT_MIN:-30}"
 LLAMA_BASE_URL="${LLAMA_BASE_URL:-http://127.0.0.1:8081/v1}"
 AIDER_MODEL="${AIDER_MODEL:-openai/qwen3-coder-next}"
+# Tells Aider this model's context window (262144) and that it is free, instead
+# of it warning "unknown context window ... using sane defaults" and guessing.
+AIDER_MODEL_METADATA="${AIDER_MODEL_METADATA:-/Users/agent/models/qwen3-coder-next.aider.metadata.json}"
 
 # Aider needs *a* key for the OpenAI-compatible path even though llama-server
 # ignores it. A placeholder is fine; this is a local server.
@@ -119,6 +122,7 @@ run_agent() {
   aider \
     --model "$AIDER_MODEL" \
     --openai-api-base "$LLAMA_BASE_URL" \
+    --model-metadata-file "$AIDER_MODEL_METADATA" \
     --edit-format whole \
     --no-auto-commits \
     --yes-always \
