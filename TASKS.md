@@ -131,7 +131,7 @@ each one file + one test file. Do them in order. -->
   check confirms exactly 15 entries (hours 4 to 18 at minute 15, no `Weekday`),
   and the README documents install / uninstall.
 
-- [ ] **11. Static serving setup docs (Funnel vs Cloudflare)**
+- [x] **11. Static serving setup docs (Funnel vs Cloudflare)**
   `docs/serving.md`: Tailscale Funnel serving `build/` as a static folder, the
   token-in-path layout, how to rotate the token, and a short comparison with
   Cloudflare (Tunnel or R2 / Pages) as the alternative.

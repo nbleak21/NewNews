@@ -18,6 +18,14 @@ memory. Write what the NEXT session needs to know, not a diary. -->
 
 <!-- entries go below this line -->
 
+## 2026-11-22 — Task 11: Static serving setup docs (Funnel vs Cloudflare)
+
+- What changed: Created `docs/serving.md` documenting Tailscale Funnel setup (steps, token rotation, troubleshooting), Cloudflare Tunnel and R2/Pages alternatives, and a feature comparison table. Updated `README.md` to link to `docs/serving.md`. Added `tests/test_serving_docs.py` (12 tests) verifying the doc exists, has all required sections, and README links to it.
+
+- Tests: `uv run pytest` → `123 passed`; `uv run ruff check .` and `uv run ruff format --check .` both clean.
+
+- Notes / blockers: The documentation covers three options (Funnel, Tunnel, R2/Pages) with setup steps, pros/cons, and troubleshooting tips. Token-in-path layout is explained with the example URL pattern `<public_base_url>/<token>/feed.xml`.
+
 ## 2026-11-22 — Task 10: launchd plist plus an install script
 
 - What changed: Created `scripts/install-launchd.sh` with install/uninstall

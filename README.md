@@ -45,14 +45,15 @@ before the first run. Agents follow [AGENTS.md](AGENTS.md).
 
 Overcast and Pocket Casts fetch feeds from their own servers, so the feed has
 to be reachable from the public internet. A Tailscale-only address will not
-work. The plan is Tailscale Funnel serving the `build/` folder, with a long
-random token in the path so the URL cannot be guessed:
+work. The plan is to serve the `build/` folder with a long random token in the
+path so the URL cannot be guessed:
 
 ```
 https://<machine>.<tailnet>.ts.net/<token>/feed.xml
 ```
 
-Setup steps are TASKS.md task 11. Treat the URL like a password.
+Setup steps are documented in [docs/serving.md](docs/serving.md). Treat the URL
+like a password.
 
 ## Subscribing in Overcast
 
