@@ -144,7 +144,7 @@ each one file + one test file. Do them in order. -->
   *Done when:* tests with a mocked transport prove a POST happens with a topic,
   nothing happens without one, and an ntfy outage does not fail the run.
 
-- [ ] **13. End-to-end test against fixtures**
+- [x] **13. End-to-end test against fixtures**
   One test that runs the whole pipeline twice from fixture feeds: first run
   writes a valid feed; second run does not repeat episodes.
   *Done when:* the test passes offline and asserts lineup length, order,

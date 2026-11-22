@@ -29,6 +29,17 @@ memory. Write what the NEXT session needs to know, not a diary. -->
 
 - Tests: `uv run pytest` → `128 passed`; `uv run ruff check .` and `uv run ruff format --check .` both clean.
 
+## 2026-11-22 — Task 13: End-to-end test against fixtures
+
+- What changed: Added `tests/test_e2e.py` (3 tests) verifying the whole pipeline:
+  - `test_e2e_full_pipeline_first_run`: First run writes `feed.xml`, records state to database, and all episodes are recorded
+  - `test_e2e_full_pipeline_second_run`: Second run reads from state database and does not repeat episodes already used
+  - `test_e2e_feed_structure`: Feed has correct structure: titles prefixed, enclosure URLs preserved with audio/mpeg type
+  - Uses monkeypatch to replace `httpx.Client` via `build_client()` to serve fixture feeds without network access
+  - Uses a later `NOW` time (10:00 UTC) so fixture episodes are within the 2-hour freshness window
+
+- Tests: `uv run pytest` → `131 passed` (added 3 new tests); `uv run ruff check .` and `uv run ruff format --check .` both clean.
+
 - Notes / blockers: The ntfy topic can be configured in `config/sources.yaml` via `ntfy_topic:` or via `NTFY_TOPIC` environment variable (which takes precedence). The environment variable pattern matches how `NEWNEWS_FEED_TOKEN` is handled. Failure alerts are logged at DEBUG level so ntfy.sh outages don't cascade.
 
 ## 2026-11-22 — Task 11: Static serving setup docs (Funnel vs Cloudflare)
