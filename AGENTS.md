@@ -81,8 +81,9 @@ uv run ruff format .                      # auto-format
 scripts/run.sh                            # what launchd runs; logs to logs/
 ```
 
-`build` and `--dry-run` do not exist until TASKS.md task 8 is done; until then
-they raise `NotImplementedError`.
+`build` and `--dry-run` are implemented (TASKS.md task 8): `build` writes
+`build/<token>/feed.xml`; `--dry-run` prints the lineup and total minutes and
+writes nothing.
 
 <!-- HINT (template): list only commands that really work, exactly as typed.
 Agents copy these verbatim; a wrong command here wastes a whole session. -->

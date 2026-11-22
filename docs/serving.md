@@ -27,27 +27,32 @@ Tailscale Funnel is the recommended option for most users. It exposes a port on 
    tailscale up
    ```
 
-3. **Enable Funnel** for the port you'll serve on (e.g., 8080):
-   ```bash
-   tailscale funnel 8080 on
-   ```
-
-4. **Serve the build folder** on that port. The simplest way is with Python's built-in server:
+3. **Serve the `build/` folder** on a local port (e.g. 8080). The simplest way
+   is Python's built-in server (or any static file server of your choice):
    ```bash
    cd /path/to/NewNews/build
    python3 -m http.server 8080
    ```
 
-   Or use any static file server of your choice.
-
-5. **Find your Tailscale hostname**:
+4. **Expose that local port with Funnel.** Funnel's public listener is always
+   HTTPS on port 443; you hand it the *local* port to proxy, so there is no
+   public `:8080`. Run it in the background so it survives logout and reboot:
    ```bash
-   tailscale ip -4
+   tailscale funnel --bg 8080
    ```
-   Your funnel URL will be `http://<ip>.zip.ts.net:8080/<token>/feed.xml` (or use your custom tailnet domain if configured).
+   Stop it with `tailscale funnel --bg 8080 off`, or `tailscale funnel reset`.
+
+5. **Find your public URL**:
+   ```bash
+   tailscale funnel status
+   ```
+   It prints your public address as `https://<machine>.<tailnet>.ts.net` — the
+   MagicDNS name (not an IP). The feed is then at
+   `https://<machine>.<tailnet>.ts.net/<token>/feed.xml`.
 
 6. **Configure NewNews**:
-   - Set `public_base_url` in `config/sources.yaml` to your funnel URL base (e.g., `http://<ip>.zip.ts.net:8080`)
+   - Set `public_base_url` in `config/sources.yaml` to that HTTPS base, e.g.
+     `https://<machine>.<tailnet>.ts.net` (no port, no token)
    - Set `NEWNEWS_FEED_TOKEN` in `.env` to your random token
    - The final feed URL is `<public_base_url>/<token>/feed.xml`
 
@@ -68,9 +73,9 @@ If you suspect the feed URL has been exposed, rotate the token:
 
 ### Troubleshooting
 
-- **Connection refused**: Make sure `tailscale funnel <port> on` is enabled
+- **Connection refused**: Make sure Funnel is running for that local port (`tailscale funnel --bg <port>`) and the static server is up
 - **404 on feed.xml**: Check that the static server is running and serving the correct directory
-- **Can't reach from outside**: Verify Tailscale is connected (`tailscale status`) and funnel is enabled
+- **Can't reach from outside**: Verify Tailscale is connected (`tailscale status`) and Funnel is active (`tailscale funnel status`)
 
 ## Cloudflare Alternatives
 
@@ -98,7 +103,7 @@ Basic setup:
 
 Pros:
 - Fully serverless; no need to keep your Mac running
-- Free tier includes 10GB storage and 10GB/month egress
+- Free tier: 10 GB-month storage plus generous Class A/B operation quotas; **egress (data transfer out) is free and unmetered** — R2's headline feature
 - Pages handles caching and CDN automatically
 
 Cons:
@@ -107,7 +112,7 @@ Cons:
 
 Basic setup:
 1. Store `feed.xml` in an R2 bucket
-2. Configure Pages to serve from the bucket (or use a CI/CD workflow to deploy)
+2. Expose the bucket publicly — make it a public bucket with a **custom domain** (simplest for one file), or front it with a Worker/Pages Function that has an R2 binding. (Pages cannot read an R2 bucket directly.)
 3. Set up a custom domain with Cloudflare
 4. Update the build process to upload `feed.xml` to R2 after generation
 
@@ -117,7 +122,7 @@ Basic setup:
 |---------|-----------------|-------------------|----------------------|
 | Mac must run | Yes (always on) | Yes (runs cloudflared) | No |
 | Setup complexity | Low | Medium | High |
-| Cost | Free | Free tier available | Free tier (10GB/mo) |
+| Cost | Free | Free tier available | Free tier (10 GB storage/mo, free egress) |
 | SSL/TLS | Automatic | Automatic | Automatic |
 | DDoS protection | Basic | Full Cloudflare | Full Cloudflare |
 | Best for | Personal use, simple setup | Users already on Cloudflare | Fully serverless, no Mac needed |

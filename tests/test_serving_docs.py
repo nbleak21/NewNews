@@ -51,10 +51,24 @@ class TestServingDocContent:
         assert "Tunnel" in serving_doc_content or "R2" in serving_doc_content
 
     def test_has_comparison_table(self, serving_doc_content: str) -> None:
-        """Must have a feature comparison table."""
-        # Markdown tables have pipe characters and header separators
-        assert "|" in serving_doc_content
-        assert "---" in serving_doc_content
+        """Must have a real feature comparison table (header + option rows)."""
+        # Count actual table rows, not just stray pipe characters.
+        table_rows = [line for line in serving_doc_content.splitlines() if line.count("|") >= 3]
+        assert len(table_rows) >= 4, "expected a header, separator, and option rows"
+        joined = "\n".join(table_rows)
+        assert "Tailscale Funnel" in joined
+        assert "Cloudflare" in joined
+
+    def test_tailscale_commands_are_current(self, serving_doc_content: str) -> None:
+        """Regression guard: the corrected Funnel commands, not the stale ones."""
+        c = serving_doc_content
+        # Correct current CLI.
+        assert "tailscale funnel --bg" in c
+        assert "tailscale funnel status" in c
+        # Stale / wrong forms must stay gone.
+        assert "funnel 8080 on" not in c
+        assert ".zip.ts.net" not in c
+        assert "http://<" not in c  # Funnel is HTTPS; no public http:// host
 
     def test_explains_why_token_needed(self, serving_doc_content: str) -> None:
         """Must explain why the token is needed (unguessable URL)."""

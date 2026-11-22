@@ -8,8 +8,8 @@ that you subscribe to once in Overcast and play through CarPlay.
 It only links to each publisher's original audio. Nothing is downloaded,
 re-hosted or edited.
 
-**Status:** scaffold only. The modules are stubs; the work is listed in
-[TASKS.md](TASKS.md) and logged in [PROGRESS.md](PROGRESS.md).
+**Status:** built out. All modules are implemented and the full test suite
+passes; the task history is in [TASKS.md](TASKS.md) and [PROGRESS.md](PROGRESS.md).
 
 <!-- HINT (template): keep README for humans (what, quick start, how to use).
 Agent instructions belong in AGENTS.md so the two do not drift. -->
@@ -23,8 +23,8 @@ uv sync                                        # creates .venv with Python 3.12
 uv run pytest                                  # should pass
 cp .env.example .env                           # then set NEWNEWS_FEED_TOKEN
 cp config/sources.example.yaml config/sources.yaml   # then replace every TODO
-uv run commute-news build --dry-run            # prints the lineup (after task 8)
-uv run commute-news build                      # writes the feed (after task 8)
+uv run commute-news build --dry-run            # prints the lineup, writes nothing
+uv run commute-news build                      # writes build/<token>/feed.xml
 ```
 
 Feed URLs in the example config are `TODO_VERIFY` placeholders. Verify each one

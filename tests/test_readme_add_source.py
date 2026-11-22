@@ -78,6 +78,6 @@ class TestAddSourceSectionNotes:
         assert "unguessable" in content or "secret" in content or "private" in content
 
     def test_notes_on_not_downloading_audio(self, readme_content: str) -> None:
-        """Should note that the tool never downloads audio."""
+        """Should actively state the link-only policy, not just avoid a word."""
         content = readme_content.lower()
-        assert "download" not in content or "never" in content
+        assert "nothing is downloaded" in content or "only links" in content
