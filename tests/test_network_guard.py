@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Nick L
+# SPDX-License-Identifier: MIT
 """Verify the autouse network guard in conftest.py actually blocks real sockets."""
 
 from __future__ import annotations

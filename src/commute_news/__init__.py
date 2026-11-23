@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Nick L
+# SPDX-License-Identifier: MIT
 """commute_news: build one private podcast feed from several public news podcast feeds.
 
 The package only ever LINKS to original audio enclosures. It never downloads,

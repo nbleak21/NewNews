@@ -22,7 +22,7 @@
 # ---------------------------------------------------------------------------
 # SERVER (run this once, separately, before the loop — e.g. via launchd):
 #   llama-server \
-#     --model /Users/agent/models/Qwen3-Coder-Next-GGUF/UD-Q8_K_XL/Qwen3-Coder-Next-UD-Q8_K_XL-00001-of-00003.gguf \
+#     --model ~/models/Qwen3-Coder-Next-GGUF/UD-Q8_K_XL/Qwen3-Coder-Next-UD-Q8_K_XL-00001-of-00003.gguf \
 #     --alias qwen3-coder-next \
 #     --host 127.0.0.1 --port 8081 \
 #     --jinja \
@@ -66,7 +66,7 @@ LLAMA_BASE_URL="${LLAMA_BASE_URL:-http://127.0.0.1:8081/v1}"
 AIDER_MODEL="${AIDER_MODEL:-openai/qwen3-coder-next}"
 # Tells Aider this model's context window (262144) and that it is free, instead
 # of it warning "unknown context window ... using sane defaults" and guessing.
-AIDER_MODEL_METADATA="${AIDER_MODEL_METADATA:-/Users/agent/models/qwen3-coder-next.aider.metadata.json}"
+AIDER_MODEL_METADATA="${AIDER_MODEL_METADATA:-$HOME/models/qwen3-coder-next.aider.metadata.json}"
 
 # Aider needs *a* key for the OpenAI-compatible path even though llama-server
 # ignores it. A placeholder is fine; this is a local server.

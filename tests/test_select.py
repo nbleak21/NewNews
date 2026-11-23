@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Nick L
+# SPDX-License-Identifier: MIT
 """Tests for the selection algorithm (TASKS.md task 5).
 
 Pure functions only: the clock (``now``), the set of already-used guids and

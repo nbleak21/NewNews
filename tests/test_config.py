@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Nick L
+# SPDX-License-Identifier: MIT
 """Tests for the config loader and schema validation (TASKS.md task 2).
 
 Every test reads a fixture from ``tests/fixtures/``; nothing here touches the

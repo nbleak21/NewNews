@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Nick L
+# SPDX-License-Identifier: MIT
 """Load and validate the YAML configuration."""
 # HINT: keep every default in ONE place (the dataclasses below) so the rule
 # "every config value has a default" is checkable by reading this file.

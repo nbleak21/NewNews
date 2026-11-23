@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Nick L
+# SPDX-License-Identifier: MIT
 """Fetch source feeds politely: one conditional GET per feed per run.
 
 Hard rules (AGENTS.md): descriptive ``User-Agent``, conditional GET with

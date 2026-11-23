@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Nick L
+# SPDX-License-Identifier: MIT
 """Choose the lineup.
 
 Pure functions: no I/O, no clock. Pass ``now`` and the already-used guids in

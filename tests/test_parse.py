@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Nick L
+# SPDX-License-Identifier: MIT
 """Tests for the episode parser and duration handling (TASKS.md task 4).
 
 Every test reads a hand-written fixture from ``tests/fixtures/feeds/`` with

@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Nick L
+# SPDX-License-Identifier: MIT
 """Shared test setup.
 
 Hard-blocks real network access so AGENTS.md rule 8 ("tests never touch the

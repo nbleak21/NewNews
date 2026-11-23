@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Nick L
+# SPDX-License-Identifier: MIT
 """Tests for docs/serving.md - serving documentation."""
 
 import pathlib

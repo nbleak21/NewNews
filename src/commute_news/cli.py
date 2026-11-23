@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Nick L
+# SPDX-License-Identifier: MIT
 """Command line entry point: ``commute-news``.
 
 ``commute-news build`` runs one build; ``--dry-run`` prints the lineup and

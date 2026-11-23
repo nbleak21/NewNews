@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Nick L
+# SPDX-License-Identifier: MIT
 """Skeleton tests: the project imports, the entry point is wired, and the
 public module names exist.
 

@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Nick L
+# SPDX-License-Identifier: MIT
 """Tests for ntfy alerts (task 12).
 
 Tests use httpx.MockTransport to avoid network access.

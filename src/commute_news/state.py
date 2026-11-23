@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Nick L
+# SPDX-License-Identifier: MIT
 """SQLite state: which episodes were already used, plus HTTP validators.
 
 One file (``state/commute.db`` by convention) holds two tables:

@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Nick L
+# SPDX-License-Identifier: MIT
 """Tests for the CLI: the argument parser (task 8a) and the build wiring
 (task 8b).
 

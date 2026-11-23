@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Nick L
+# SPDX-License-Identifier: MIT
 """Render the private feed and write it out.
 
 Pure functions plus one small atomic writer. The XML is built with feedgen

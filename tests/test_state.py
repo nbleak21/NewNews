@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Nick L
+# SPDX-License-Identifier: MIT
 """Tests for state.py: SQLite storage of validators, used episodes, pruning.
 
 Every test uses a database file inside pytest's ``tmp_path``. No network, and

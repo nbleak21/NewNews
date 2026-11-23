@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Nick L
+# SPDX-License-Identifier: MIT
 """End-to-end tests: the whole pipeline run twice from fixture feeds.
 
 These exercise the REAL pipeline behaviour — no ``used_guids`` is injected, so

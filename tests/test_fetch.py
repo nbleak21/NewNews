@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Nick L
+# SPDX-License-Identifier: MIT
 """Tests for the polite feed fetcher (TASKS.md task 3).
 
 Every test drives ``httpx.MockTransport``, so nothing here touches the

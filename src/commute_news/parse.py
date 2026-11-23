@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Nick L
+# SPDX-License-Identifier: MIT
 """Turn raw feed XML into Episode records.
 
 Duration rules (decided, see "Decisions" in AGENTS.md):

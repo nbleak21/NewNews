@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Nick L
+# SPDX-License-Identifier: MIT
 """Tests for the private feed writer (TASKS.md task 7).
 
 Everything runs offline: the feed is rendered in memory, parsed back with

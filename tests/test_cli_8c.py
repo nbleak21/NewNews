@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Nick L
+# SPDX-License-Identifier: MIT
 """Tests for task 8c: dry-run output and the write path in cli.py.
 
 Tests verify the dry-run prints the lineup and total minutes, and the write
