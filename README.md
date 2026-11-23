@@ -128,7 +128,7 @@ This prints your lineup to stdout without writing any files. Check that:
 - The total minutes are in the 20–30 minute range.
 - No errors appear in the output.
 
-If your source doesn't appear, it may have no fresh episodes (within 2 hours)
+If your source doesn't appear, it may have no fresh episodes (within 3 hours)
 or its `priority` is too low to make the cutoff.
 
 ### 4. Add a fixture for testing
@@ -155,4 +155,4 @@ git commit -m "Add Your Podcast Name source"
 
 The feed will be regenerated automatically on the next scheduled run (hourly
 from 04:15 to 18:15 Central time). Your new source will appear in the feed
-within 2 hours if it has fresh episodes.
+within 3 hours if it has fresh episodes.

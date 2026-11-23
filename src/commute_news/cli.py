@@ -271,11 +271,12 @@ def _write_feed_and_state(
 ) -> None:
     """Record this run's state, then write the whole retained feed.
 
-    The feed is the entire retained window (``retain_hours``), not just this
-    run's lineup: this run's episodes are recorded, old rows pruned, and the
-    feed rebuilt from ``recent_items`` so items persist across runs and drop
-    off once they age past ``retain_hours``. Validators are saved for the next
-    run's conditional GET.
+    The feed spans the retained window (``retain_hours``), not just this run's
+    lineup: this run's episodes are recorded, old rows pruned, and the feed
+    rebuilt from ``recent_items`` so items persist across runs and drop off once
+    they age past ``retain_hours``. It keeps only the NEWEST episode per source,
+    so a fast show cannot stack several near-identical episodes in the feed.
+    Validators are saved for the next run's conditional GET.
     """
     feed_token = _get_feed_token()
 
@@ -302,34 +303,46 @@ def _write_feed_and_state(
     if removed:
         logger.info("pruned %d old episode(s)", removed)
 
-    # 2. Build the feed, guid-unique, from the whole retained window: this run's
-    #    lineup first (keeping its curated order), then older retained items
+    # 2. Build the feed from the whole retained window, but keep only the NEWEST
+    #    episode PER SOURCE. A fast show (hourly NPR News Now) would otherwise
+    #    stack several near-identical episodes in the feed across successive
+    #    runs; the owner wants just the latest of each source. Order: this run's
+    #    curated lineup first, then any source seen only in the retained window
     #    (recent_items is newest-first).
     retained = recent_items(state_conn, cutoff)
     source_names = {source.id: source.name for source in config.sources}
-    seen: set[str] = set()
+
+    lineup_items: list[dict[str, Any]] = [
+        {
+            "guid": episode.guid,
+            "source_id": episode.source_id,
+            "title": episode.title,
+            "published": episode.published,
+            "enclosure_url": episode.enclosure_url,
+            "enclosure_type": episode.enclosure_type,
+            "enclosure_length": episode.enclosure_length,
+            "slot_label": slot_label,
+        }
+        for episode in lineup.episodes
+    ]
+
+    # The newest item per source across every candidate (this run + retained),
+    # compared by publication time (both are tz-aware UTC datetimes).
+    newest_by_source: dict[str, dict[str, Any]] = {}
+    for item in (*lineup_items, *retained):
+        current = newest_by_source.get(item["source_id"])
+        if current is None or item["published"] > current["published"]:
+            newest_by_source[item["source_id"]] = item
+
+    # Emit exactly one item per source in a stable order.
     items: list[dict[str, Any]] = []
-    for episode in lineup.episodes:
-        if episode.guid in seen:
+    placed: set[str] = set()
+    for item in (*lineup_items, *retained):
+        source_id = item["source_id"]
+        if source_id in placed:
             continue
-        seen.add(episode.guid)
-        items.append(
-            {
-                "guid": episode.guid,
-                "source_id": episode.source_id,
-                "title": episode.title,
-                "published": episode.published,
-                "enclosure_url": episode.enclosure_url,
-                "enclosure_type": episode.enclosure_type,
-                "enclosure_length": episode.enclosure_length,
-                "slot_label": slot_label,
-            }
-        )
-    for row in retained:
-        if row["guid"] in seen:
-            continue
-        seen.add(row["guid"])
-        items.append(row)
+        placed.add(source_id)
+        items.append(newest_by_source[source_id])
 
     pub_dates = ordered_pubdates(base=now, count=len(items))  # default DEFAULT_STEP_SECONDS
     feed_items = [

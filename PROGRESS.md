@@ -355,3 +355,28 @@ memory. Write what the NEXT session needs to know, not a diary. -->
   the latest ~25 min, and never sent conditional GETs — contrary to AGENTS.md
   rules 3 and 5. All three are now wired. Separately, all 7 Apple feed URLs in
   `config/sources.yaml` were re-verified live against the lookup API: all match.
+
+## 2026-11-22 — Ops: live-run fixes (schedule, feed dedup, roster, freshness)
+- What changed: (1) Repo MOVED out of `~/Documents/GitHub` to `~/GitHub` —
+  macOS TCC blocks a LaunchAgent from *executing* a script under `~/Documents`,
+  so every hourly run died `exit 126` before it could log (only manual runs
+  worked). Venv rebuilt at the new path, both LaunchAgents repointed; a
+  `launchctl kickstart` now exits 0. (2) `_write_feed_and_state` (`cli.py`) now
+  keeps only the NEWEST episode per source, so a fast hourly show (NPR News Now,
+  Fox News Hourly Update) no longer stacks several near-identical reports in the
+  feed. (3) `config/sources.yaml` (gitignored/local) reworked to a short-format
+  roster: NPR News Now + Fox News Hourly Update (hourly anchors) + Marketplace
+  Morning Report, WSJ Minute Briefing, CNN 5 Things, AP Headline News, The Daily
+  Signal; dropped the long/infrequent shows (Fox Rundown, BBC Global, WSJ What's
+  News, Up First, The Daily, Morning Wire). (4) `freshness_hours` 2 -> 3 in the
+  live config (safe now the feed is one-per-source). AGENTS.md Decision #4 and
+  README updated to 3h.
+- Tests: added `test_fast_source_is_not_stacked_in_feed` (`test_cli.py`) and
+  rewrote the second e2e test for one-per-source. `uv run pytest` -> 157 passed;
+  `ruff check` / `ruff format --check` clean.
+- Notes / blockers: all feed URLs Apple-verified. Only NPR News Now and Fox News
+  Hourly Update publish hourly; the rest are weekday / few-a-day, so a full
+  ~5-source lineup is really a weekday-morning thing. No short *international*
+  newscast exists (BBC Global was the only option, ~28 min). The roster itself
+  lives in the gitignored `config/sources.yaml`, so it is not in this commit —
+  only the code/doc changes are.

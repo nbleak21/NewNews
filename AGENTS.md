@@ -12,7 +12,7 @@ NewNews builds one private podcast RSS feed (`feed.xml`) for a commute. Every
 hour from about 4:15am to 6:15pm America/Chicago, all seven days of the week, a
 script reads a list of news
 podcast RSS feeds from a config file, takes the newest unplayed episode of each
-show published within a freshness window (default 2 hours), and adds episodes
+show published within a freshness window (3 hours), and adds episodes
 in priority order until the lineup runs about 25 minutes (range 20 to 30) while
 keeping a mix of outlets (each source is tagged left / center-left / center /
 right / international). The owner subscribes to the feed once in Overcast and
@@ -132,9 +132,11 @@ with the date, so later sessions do not re-ask or silently choose differently. -
    enclosure `length`, with `assumed_bitrate_kbps` configurable (default 128).
    It is an approximation and must be commented as one. If `length` is missing
    or zero, skip the episode.
-4. **Freshness: 2 hour window accepted as is.** Once-a-day shows (The Daily,
-   Up First, Morning Wire) are intentionally eligible only for about 2 hours
-   after they publish. No change.
+4. **Freshness: 3 hour window** (owner changed it from 2h on 2026-11-22). Only
+   episodes published within this window are eligible. The wider window became
+   safe once the feed was changed to keep only the newest episode per source,
+   so a fast show (NPR News Now, Fox News Hourly Update) no longer stacks
+   several near-identical reports. `retain_hours` must stay >= `freshness_hours`.
 
 ## Open questions (ask the owner; do not resolve by guessing)
 

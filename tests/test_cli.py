@@ -217,3 +217,61 @@ def test_conditional_get_revalidates_on_second_run(
     # The retained feed still carries ep-1 from run 1.
     feed = (tmp_path / "build" / "cg-token" / "feed.xml").read_bytes()
     assert b"ep-1" in feed
+
+
+# --- one item per source: a fast show is not stacked in the feed -----------
+
+
+def test_fast_source_is_not_stacked_in_feed(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """An hourly show must appear once (the newest), not several reports deep.
+
+    Run 1 (10:05) records NPR's 10:00 episode; an hour later run 2 (11:05)
+    records NPR's 11:00 episode. Both are inside the 6h retain window, but the
+    owner wants JUST the latest -- the feed must carry only the 11:00 one.
+    """
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("NEWNEWS_FEED_TOKEN", "stack-token")
+    cfg = tmp_path / "cfg.yaml"
+    cfg.write_text(
+        "timezone: 'UTC'\n"
+        "freshness_hours: 2\n"
+        "retain_hours: 6\n"
+        "slots:\n"
+        "  all:\n"
+        "    label: AM\n"
+        "    start: '00:00'\n"
+        "    end: '23:59'\n"
+        "    sources: all\n"
+        "sources:\n"
+        "  - id: npr\n"
+        "    name: NPR News Now\n"
+        "    lean: center\n"
+        "    priority: 1\n"
+        "    feed_url: 'https://example.com/npr.xml'\n"
+    )
+
+    def client_for(published: str, guid: str) -> httpx.Client:
+        body = _one_episode_feed(published, guid)
+        return httpx.Client(
+            transport=httpx.MockTransport(lambda _r: httpx.Response(200, content=body))
+        )
+
+    run_build(
+        config_path=str(cfg),
+        dry_run=False,
+        client=client_for("Thu, 19 Nov 2026 10:00:00 GMT", "npr-10"),
+        now=datetime(2026, 11, 19, 10, 5, tzinfo=UTC),
+    )
+    run_build(
+        config_path=str(cfg),
+        dry_run=False,
+        client=client_for("Thu, 19 Nov 2026 11:00:00 GMT", "npr-11"),
+        now=datetime(2026, 11, 19, 11, 5, tzinfo=UTC),
+    )
+
+    feed = (tmp_path / "build" / "stack-token" / "feed.xml").read_bytes()
+    assert feed.count(b"<guid") == 1, "exactly one NPR item should remain"
+    assert b"npr-11" in feed  # the newest
+    assert b"npr-10" not in feed  # the older one is not stacked

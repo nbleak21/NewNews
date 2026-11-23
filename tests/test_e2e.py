@@ -2,9 +2,9 @@
 
 These exercise the REAL pipeline behaviour — no ``used_guids`` is injected, so
 ``run_build`` loads it from state. A second run must not repeat the first run's
-episodes, and the written feed must carry the whole retained window, not just
-the latest run's lineup. Nothing here touches the network (fixtures are served
-through ``httpx.MockTransport``).
+episodes, and the written feed keeps the newest episode of each source (never
+several episodes from one fast show). Nothing here touches the network
+(fixtures are served through ``httpx.MockTransport``).
 """
 
 from __future__ import annotations
@@ -54,6 +54,32 @@ def _feed_guids(feed_path: Path) -> set[str]:
     return {entry.id for entry in parsed.entries}
 
 
+def _guid_to_source(db: Path) -> dict[str, str]:
+    conn = connect(db)
+    try:
+        return {
+            row["guid"]: row["source_id"]
+            for row in conn.execute("SELECT guid, source_id FROM episodes")
+        }
+    finally:
+        conn.close()
+
+
+def _newest_guid_per_source(db: Path) -> set[str]:
+    """The guid of the newest (max published) recorded episode of each source."""
+    conn = connect(db)
+    try:
+        best: dict[str, tuple[float, str]] = {}
+        for row in conn.execute("SELECT guid, source_id, published FROM episodes"):
+            sid = row["source_id"]
+            pub = float(row["published"])
+            if sid not in best or pub > best[sid][0]:
+                best[sid] = (pub, row["guid"])
+    finally:
+        conn.close()
+    return {guid for _, guid in best.values()}
+
+
 def _setup(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, token: str) -> None:
     monkeypatch.setenv("NEWNEWS_FEED_TOKEN", token)
     monkeypatch.chdir(tmp_path)  # build/ and state/ land under tmp_path
@@ -83,10 +109,15 @@ def test_first_run_writes_feed_and_records_state(
     assert _feed_guids(feed_path) == recorded
 
 
-def test_second_run_does_not_repeat_and_feed_retains_window(
+def test_second_run_keeps_one_newest_item_per_source(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """A second run excludes the first run's episodes, yet the feed keeps them."""
+    """Across runs the feed holds the newest episode of each source, exactly once.
+
+    A fast show must not stack several episodes in the feed: successive runs
+    record new episodes, but the feed collapses to one item per source (the
+    newest), which is what the owner wants.
+    """
     token = "e2e-second"
     _setup(tmp_path, monkeypatch, token)
 
@@ -98,17 +129,19 @@ def test_second_run_does_not_repeat_and_feed_retains_window(
     lineup2 = run_build(config_path=CONFIG, dry_run=False, client=fixture_client(), now=NOW)
     run2_guids = {e.guid for e in lineup2.episodes}
 
-    # (a) No episode is repeated across runs.
+    feed_path = tmp_path / "build" / token / "feed.xml"
+    feed_guids = _feed_guids(feed_path)
+    db = tmp_path / "state" / "commute.db"
+
+    # (a) No episode is repeated across runs (cross-run dedup still holds).
     assert run1_guids.isdisjoint(run2_guids), (
         f"second run repeated episodes: {run1_guids & run2_guids}"
     )
-
-    # (b) The written feed still carries the first run's episodes (retained
-    #     within retain_hours), not only the latest run's lineup.
-    feed_path = tmp_path / "build" / token / "feed.xml"
-    feed_guids = _feed_guids(feed_path)
-    assert run1_guids <= feed_guids, "retained feed dropped the first run's items"
-    assert run2_guids <= feed_guids
+    # (b) The feed holds exactly the newest recorded episode of each source.
+    assert feed_guids == _newest_guid_per_source(db)
+    # (c) No source appears more than once in the feed (no stacked NPRs).
+    sources = [_guid_to_source(db)[g] for g in feed_guids]
+    assert len(sources) == len(set(sources)), f"a source appears more than once: {sources}"
 
 
 def test_feed_items_are_prefixed_and_enclosures_preserved(
